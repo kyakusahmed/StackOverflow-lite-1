@@ -103,9 +103,11 @@ answers p b{
 	float: right;
 	text-align: center;
 	width: 100px;
+	/* margin :0 20px 10px 20px; */
 	/* color: #1c1c1c; */
 	padding-left: 2px;
 	padding-right: 2px;
+	padding-bottom: 1px;
 	font-family: "Simplifica";
 	font-size: 20px;
 	border-radius: 7px;
@@ -203,6 +205,7 @@ header a:hover{
 	/*background: rgb(236, 151, 81);*/
 }
 
+
 #showcase strong{
 	background: #e8491d;
 }
@@ -224,6 +227,10 @@ header a:hover{
 	
 }
 
+#showcase #Qtns2 p li .author strong{
+	background: #f4f4f4;
+	border: none;
+}
 
 #showcase h4{
 	border-top: 2px solid #35424a;
@@ -287,7 +294,7 @@ header a:hover{
 }
 
 
-#alert {
+#alert ,#alert2 {
 	font-family: "Simplifica";
 	background: #1c1c1c;
 	text-align: center;

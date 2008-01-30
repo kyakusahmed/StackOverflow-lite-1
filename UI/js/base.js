@@ -10,12 +10,7 @@ let alertMessage = (message) => {
     alert.innerHTML = message;
     setTimeout(() => alert.style.display = 'none', 6000);
 }
- 
 
-function handleErrors(response) {
-    if (!response.ok) throw Error(response.status);
-    return response;
-}
 
 function createNode(element){
     return document.createElement(element);
@@ -26,98 +21,6 @@ function append(parent, element){
 }
 
 
-function onFetchAnswers(){
-    console.log(document.title == "StackOverflow-lite-question");
-    if (document.title == "StackOverflow-lite-question"){
-        questionId = window.localStorage.getItem('questionId');
-        let submit2 = document.getElementById('submit2');
-
-        submit2.addEventListener('click', postAns => {
-            postAnswer(questionId);
-            // window.localStorage.setItem('questionId', questionId);
-            // window.location.reload();
-        })
-        console.log(questionId);
-
-        if(!document.title == "StackOverflow-lite-question" || !document.title == "StackOverflow-lite-index"){
-            window.localStorage.removeItem('questionId');
-        }
-        
-        fetch(`http://127.0.0.1:5000/api/v1/questions/${questionId}/answers`, {
-            mode: "cors",
-        })
-        .then(res => res.json())
-        .then(json =>{
-            console.log(json);
-            let Question = document.getElementById('Question');
-                h3 = createNode('h3');
-                li = createNode('li');
-                span1 = createNode('span');
-                span2 = createNode('span')
-                
-            fetch(`http://localhost:5000/api/v1/questions/${questionId}`)
-            .then(res => res.json())
-            .then(json=>{
-                console.log(json);
-                h3.innerHTML = `${json.body}`;
-                span1.innerHTML = `<strong>Author: </strong>${json.author}`;
-                span2.innerHTML = `<strong>Topic: </strong>${json.topic}`;
-                // li.style['max-width'] = `${Math.max(json.body.length, 400)}px`;
-                append(li, span2);
-                append(li, h3);
-                append(li, span1);
-                append(Question, li);
-            })
-            
-            if ("message" in json){
-                console.log(json.message);
-                let Qtns2 = document.getElementById('Qtns2');
-                    Qtn = createNode('p');
-    
-                Qtn.innerHTML = `${json.message}`
-                append(Qtns2, Qtn)
-
-            }
-            if ("answers" in json){
-                console.log(json);
-                for (let answer of  json.answers){
-                    let li = createNode('li'),
-                        span = createNode('span'),
-                        span2 = createNode('span'),
-                        strong = createNode('strong');
-                        
-                        Qtns2 = document.getElementById('Qtns2');
-                        Qtn = createNode('p');
-                    
-
-                    if (answer.prefered == true){
-                        strong.classList.add("prefered");
-                        span.innerHTML = ` <strong>Author:</strong> ${answer.author}`;
-                        span2.innerHTML = `${answer.body} <br>`;
-                        strong.innerHTML = "Prefered answer";
-                        append(li, span2);
-                        append(li, span);
-                        append(li, strong);
-                        append(Qtn, li);
-                        // append(a, Qtn);
-                        append(Qtns2, Qtn);
-                    }
-                    if (answer.prefered == false){
-                        span.innerHTML = ` <strong>Author:</strong> ${answer.author}`;
-                        span2.innerHTML = `${answer.body} <br>`;
-                        append(li, span2);
-                        append(li, span);
-                        append(Qtn, li);
-                        // append(a, Qtn);
-                        append(Qtns2, Qtn);
-                        
-                    }
-                }
-            }
-        });
-    }
-    
-    }
 
 function onDocumentReady(){
     console.log(document.title=="StackOverflow-lite-index");
@@ -149,32 +52,68 @@ function onDocumentReady(){
                         span2 = createNode('span'),
                         span3 = createNode('span');
                         a = createNode('a');
+                        a2 = createNode('a');
                         Qtn = createNode('p');
                         Qtns = document.getElementById('Qtns');
+                        span4 = createNode('span');
                     
 
                     console.log(1, document.title=="StackOverflow-lite-index");
                     if (document.title=="StackOverflow-lite-index"){
                         a.setAttribute('href', 'question.html');
                         a.setAttribute('class', 'question_link');
+                        a2.setAttribute('href', 'updateQuestion.html');
+                        a2.setAttribute('class', 'question_link');
                         console.log("href registerd");
                         console.log(document.title);
+                        console.log(question.questionId);
                         a.onclick = link =>{
-                            window.localStorage.setItem('questionId', question.questionId);
-                            window.location.replace('./question.html')
+                            window.localStorage.setItem('questionId1', question.questionId);
+                            window.location.replace('./question.html');
+
                         }
+                        a2.onclick = link =>{
+                            window.localStorage.setItem('questionId-edit', question.questionId);
+                            window.location.replace('./updateQuestion.html');
+                        }
+                        qtn_author = question.author;
+                        console.log('qtn auth', qtn_author, typeof(qtn_author));
+                        console.log(window.localStorage.getItem('user'));
                         let submit = document.getElementById('submit');
-                        span.innerHTML = ` <strong>Author:</strong> ${question.author}`;
-                        span2.innerHTML = `${question.body} <br>`;
-                        span3.innerHTML = ` <strong>Topic:</strong> ${question.topic} <br>`;
-                        a.innerHTML = 'view answers';
-        //                 Qtn.innerHTML = li
-                        append(li, span3);
-                        append(li, span2);
-                        append(li, span);
-                        append(li, a);
-                        append(Qtn, li);
-                        append(Qtns, Qtn);
+                            condition5 = window.localStorage.getItem('user') == qtn_author;
+                            condition6 = window.localStorage.getItem('user') == null;
+
+                        console.log('cond 5', condition5);
+                        if (!condition6 && condition5){
+                            console.log('then this hsould run');
+                            span.innerHTML = ` <strong>Author:</strong> ${question.author}`;
+                            span2.innerHTML = `${question.body} <br>`;
+                            span3.innerHTML = ` <strong>Topic:</strong> ${question.topic} <br>`;
+                            a.innerHTML = 'view answers';
+                            a2.innerHTML = 'edit question'
+                            append(li, span3);
+                            append(li, span2);
+                            append(li, span);
+                            append(span4, a);
+                            append(span4, a2);
+                            append(li, span4);
+                            append(Qtn, li);
+                            append(Qtns, Qtn);
+                        }
+
+                        if (!condition5 || condition6){
+                            span.innerHTML = ` <strong>Author:</strong> ${question.author}`;
+                            span2.innerHTML = `${question.body} <br>`;
+                            span3.innerHTML = ` <strong>Topic:</strong> ${question.topic} <br>`;
+                            a.innerHTML = 'view answers';
+    
+                            append(li, span3);
+                            append(li, span2);
+                            append(li, span);
+                            append(li, a);
+                            append(Qtn, li);
+                            append(Qtns, Qtn);
+                        }
                         submit.addEventListener('click', post=>{
                             postQuestion();
                         })
@@ -214,9 +153,14 @@ function postQuestion(){
 
             if ("message" in json || "msg" in json){
                 alertMessage(json.message);
-                alertMessage(json.msg);
+                if (json.msg == 'Token has expired' || json.msg == 'Not enough segments'){
+                    alertMessage('Please login to continue!, redirecting to login page...');
+                    setTimeout(() => window.location.replace('./login.html'), 3000);
+                }
+                // alertMessage(json.msg);
             }
             if ("success" in json){
+                
                 window.location.reload();
                 console.log('this runs');
             }
@@ -224,16 +168,19 @@ function postQuestion(){
         .catch(error => console.log(error));
     }
 
-function postAnswer(questionId){
-    let body = document.getElementById('body').value;
-        postData = {
-            body
-        };
 
+function updateQuestion(questionId){
+    let topic = document.getElementById('topic').value;
+        body = document.getElementById('body').value;
+        postData = {
+            topic,
+            body,
+        };
+    if(postData.topic.length==0 || postData.body.length)
     console.log(`${postData}`);
-    if (document.title=="StackOverflow-lite-question")
-        fetch(`http://localhost:5000/api/v1/questions/${questionId}/answers`, {
-            method: "POST",
+    if (document.title=="StackOverflow-lite-index")
+        fetch(`http://localhost:5000/api/v1/questions${questionId}`, {
+            method: "PATCH",
             mode: "cors",
             headers: {
                 "Authorization": `Bearer ${localStorage.getItem('access')}`,
@@ -248,13 +195,82 @@ function postAnswer(questionId){
 
             if ("message" in json || "msg" in json){
                 alertMessage(json.message);
-                alertMessage(json.msg);
+                if (json.msg == 'Token has expired' || json.msg == 'Not enough segments'){
+                    alertMessage('Please login to continue!, redirecting to login page...');
+                    setTimeout(() => window.location.replace('./login.html'), 3000);
+                }
+                // alertMessage(json.msg);
             }
             if ("success" in json){
-                window.location.reload();
+                alertMessage('Success, question updated!');
+                setTimeout(() => window.location.replace('./index.html'), 3000);
+                
                 console.log('this runs');
             }
         })
         .catch(error => console.log(error));
     }
 
+function onEditQuestion(){
+    questionId = window.localStorage.getItem('questionId-edit');
+    console.log('questionId');
+    
+    if (document.title == "StackOverflow-lite-edit"){
+        let Question = document.getElementById('oldQuest');
+            submit = document.getElementById('submit');
+            h3 = createNode('h3');
+            li = createNode('li');
+            span1 = createNode('span');
+            span2 = createNode('span')
+            a = createNode('a');
+            b = createNode('b');
+        submit.addEventListener('click', edit =>{
+            updateQuestion(questionId);
+        })
+        fetch(`http://localhost:5000/api/v1/questions`)
+        .then(res => res.json())
+        .then(json=>{
+            console.log(json);
+            if ('questions' in json){
+                for (let question of json.questions){
+                    if (question.questionId == questionId){
+                        h3.innerHTML = `${question.body}`;
+                        span1.innerHTML = `<strong>Author: </strong>${question.author}`;
+                        span2.innerHTML = `<strong>Topic: </strong>${question.topic}`;
+                        
+                        // li.style['max-width'] = `${Math.max(json.body.length, 400)}px`;
+                        
+                        append(li, span2);
+                        append(li, h3);
+                        append(li, span1);
+                        append(Question, li);
+                    }
+                    
+                }
+            }
+            if(!document.title == 'StackOverflow-lite-index' || !document.title=='StackOverflow-lite-edit'){
+                window.localStorage.removeItem('questionId-edit');
+            }
+        })
+            /*==============================*/
+    }
+
+}
+
+
+
+// h3.innerHTML = `${json.body}`;
+// span1.innerHTML = `<strong>Author: </strong>${json.author}`;
+// span2.innerHTML = `<strong>Topic: </strong>${json.topic}`;
+// b.classList.add('prefer');
+// a.classList.add('choose');
+// a.innerHTML = 'Prefer answer';
+// // li.style['max-width'] = `${Math.max(json.body.length, 400)}px`;
+// qnEdit = window.localStorage.getItem('questionId-edit')
+// append(li, span2);
+// append(li, h3);
+// append(li, span1);
+// append(Question, li);
+
+// window.localStorage.removeItem('questionId-edit');
+// })

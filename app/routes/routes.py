@@ -354,18 +354,18 @@ def select_answer_as_preferred(questionId, answerId):
                         'questionId': answer[0][1]
                     }
                     return jsonify({
-                        'message': "Answer marked as preferred",
+                        'success': "Answer marked as preferred",
                         'answer': temp
                     }), 201
     
                 return jsonify({'message': 'Answer not found!'}), 404
-            return jsonify({'Access denied':
+            return jsonify({'message':
                             f'Only question auhtor:{current_user} can perform this action!'})
         return jsonify({'message':
                         'Question not found'}), 404
 
     return jsonify({
-        'message': 'To post an answer, you need to be logged in',
+        'message': 'To prefer an answer, you need to be logged in',
         'info': 'Signup or login, to get access_token'
     }), 401
 
@@ -386,12 +386,12 @@ def update_question(questionId):
 
                 if questionId in ids:
                     if "topic" in request_data:
-                        updated_question["topic"] = request_data["topic"]
+                        updated_question["topic"] = request_data["topic"].strip()
                     if "body" in request_data:
-                        updated_question["body"] = request_data["body"]
-                    condition_1 = len(updated_question['topic'])
-                    condition_2 = len(updated_question['body'])
-                    if condition_1 != 0 and condition_2 != 0:
+                        updated_question["body"] = request_data["body"].strip()
+                    condition_1 = len(updated_question['topic']) == 0
+                    condition_2 = len(updated_question['body']) == 0
+                    if not condition_1  or not condition_2 != 0:
                         for question in questionsList:
                             if int(question[4]) == questionId:
                                 conn.update_question(
@@ -403,13 +403,13 @@ def update_question(questionId):
                                     'new_body': updated_question['body']
                                 }
                                 msg = 'Question updated successfully.'
-                                return jsonify({'message': msg,
+                                return jsonify({'success': msg,
                                                 'updated_question': temp}), 200
                     return jsonify({
-                        'msg': 'body and topic fields should not be empty'})
+                        'message': 'body and topic fields should not be empty'}), 400
             msg = f'Only question auhtor:{current_user} can perform this action!'
-            return jsonify({'Access denied': msg})
-        response = Response(json.dumps(['Question not found']), status=404)
+            return jsonify({'message': msg})
+        response = Response({'message':'Question not found'}), 404
         return response
 
     return jsonify({

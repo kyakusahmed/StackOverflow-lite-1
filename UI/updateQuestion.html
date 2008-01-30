@@ -6,10 +6,10 @@
 		<meta name="description" content="Platform where users can post,view and answer questions about programming and code." />
 		<meta name="keywords" content="code,programming,computer science,programming languages" />
 		<meta name="author" content="Cedric Lusiba" />
-		<title>StackOverflow-lite-login</title>
-		<link rel="stylesheet" type="text/css" href="./css/login.css" />
-		<script src="./js/post.js"></script>
-	<body>
+		<title>StackOverflow-lite-edit</title>
+		<link rel="stylesheet" type="text/css" href="./css/edit.css" />
+		<script src="./js/base.js"></script>
+	<body onload="onEditQuestion()">
 		<header>
 			<div class='container' id="container">
 				<div id="branding">
@@ -18,8 +18,8 @@
 				<nav>
 					<ul>
 						<li><a href="index.html">Home</a></li>
-						<li class="current"><a href="login.html">Log in</a></li>
-						<li><a href="signUp.html">Sign Up</a></li>
+						<li class="current"><a href="updateQuestion.html">Edit Question</a></li>
+						<li><a href="user.html">Profile</a></li>
 					</ul>
 				</nav>
 			</div>
@@ -30,19 +30,17 @@
 			<section id="register">
 				<div class="box">
 					<div class="container">
-						<strong id="seen"><h2 >Sign in</h2></strong>
+						<strong id="seen"><h2 >Edit Question</h2></strong>
+						<div id="oldQuest"></div>
 						<div id="alert"></div>
-						<form method="POST" action="login()" enctype="multipart/form-data">
-							<p><h3>Username</h3><input id="username" name="username" type="text" placeholder="Enter Username "></p>
+						<form method="POST" enctype="multipart/form-data">
+							<p><h3>Topic</h3><input id="topic" name="topic" type="text" placeholder="Enter new topic"></p>
 
-							<p><h3>Password</h3><input id="password" name="password" type="password" placeholder="Enter Password"></p>
+							<p><h3>Body</h3><textarea id="body" class="QuestBox" name="body" type="text" placeholder="Update question.."></textarea></p>
 							
-							<p><div id="butt"><a id="submit" onclick="login()">Log in</a></div></p>
+							<p><div id="butt"><a id="submit" >Edit</a></div></p>
 							<div id="container2">
-								<p><label class="contain"><h3>Remember me</h3>
-									<input id="remember" type="checkbox" checked="checked" >
-									
-								</label></p>
+							<div></div>
 							</div>
 
 						</form>

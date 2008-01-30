@@ -86,6 +86,8 @@ function signUp(){
                 if ("access_token" in json){
                     console.log(json['access_token']);
                     localStorage.setItem('access', json['access_token']);
+                    localStorage.setItem('user', username);
+                    // window.localStorage.setItem('qtn_author',QuestAuthor);
                     window.location.replace('./index.html');
                     console.log('this runs');
                 }

@@ -29,6 +29,15 @@ ul{
 
  }
 
+li{
+	list-style: none;
+	
+}
+
+#oldQuest li{
+	margin-left: 10px;
+}
+
 .button_1{
 	height: 30px;
 	margin:auto;
@@ -150,9 +159,33 @@ header a:hover{
 	color: #e8491d;
 }
 
+#oldQuest{
+    font-family: "Simplifica";
+	background: #1c1c1c;
+	text-align: left;
+	font-style:bold;
+	/* display: none; */
+	border-radius: 15px;
+	/* border-bottom: solid 1px #a1d3b0; */
+	color: rgb(68, 182, 106);
+}
 
-#login{
-	min-height: 500px;
+#showcase #oldQuest li {
+    list-style: none;
+/* 	text-align: left; */
+	border-radius: 10px /*solid rgb(201, 73, 73)*/;
+/* 	border-bottom: 1px solid #e8491d; */
+/* 	border-left: 1px solid #1c1c1c; */
+	padding:10px;
+	margin-left:auto;
+	
+}
+
+
+
+
+#login #register{
+	min-height: 70%;
 	color: #f4f4f4;
 }
 
@@ -168,19 +201,24 @@ header a:hover{
 	/*border: #35424a 2px solid;*/
 	margin-left:20%;
 	margin-right: 20%;
-	min-height: 80%;
+	min-height: 60%;
 	padding-top: 20px;
 	padding-bottom: 10px;
-	width :55%;
+	min-width :auto;
 
 }
 
 #register form .QuestBox {
-	min-height: 100px;
+    min-height: 100px;
+    box-shadow: 10px;
+    /* min-height:30px; */
+    padding:3px ;
+    width: 90%;
+    border-radius: 10px;
 }
 
 #register h3{
-	
+	margin-top:auto;
 	color:rgb(68, 182, 106);
 	margin-bottom: 0;
 }
@@ -204,7 +242,7 @@ header a:hover{
 }
 
 #register form{
-	min-height:380px;
+	min-height:320px;
 	margin-bottom: 10px;
 
 }
