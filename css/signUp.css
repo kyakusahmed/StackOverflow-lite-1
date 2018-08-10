@@ -113,6 +113,10 @@ header a:hover{
 	text-decoration:none; 
 }
 
+#register a{
+	color: #e8491d;
+}
+
 #register form{
 	min-height: 200px;
 
