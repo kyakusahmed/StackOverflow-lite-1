@@ -88,11 +88,11 @@ header a:hover{
 /*showcase*/
 #showcase{
 	min-height: 400px;
-	width: 80%;
+	width: 90%;
 	/*background:url("../img/015.jpg") no-repeat;*/
 	/*margin:20px;*/
 	color : black;
-	float: left;
+
 }
 
 #showcase h3{
@@ -100,50 +100,57 @@ header a:hover{
 }
 
 /*content*/
-/*question box*/
+/*answer box*/
 #content {
 	width: 100%;
 }
 
 
-#question{
-	margin-top: 20px;
-	padding-top: 20px;
-	width:20%;
-	padding-bottom: 10px;
-	float: right;
-}
-#question .box{
+#answer{
 	
-	background:url("../img/015.jpg") no-repeat ;
-	border: #35424a 4px solid;
+	width:100%;
 }
 
-#question h2{
+#answer .box{
+	/*background: grey;*/
+	width:100%;
+	/*background:url("../img/img3.jpg") no-repeat ;*/
+	background-color: #35424a;
+	border-top: #35424a 4px solid;
+	margin-bottom: 10px;
+	border-bottom: #35424a 4px solid;
+}
+
+#answer h2{
 	margin-top: 20px;
 	color: #ffffff;
 	font-weight: bold;
 	text-decoration:none; 
 }
 
-#question form{
-	min-height: 200px;
+#answer form{
+	min-height: 30px;
 
 }
 
-#question form input{
- 	min-height:30px;
+#answer form input{
+ 	min-height:20px;
  	padding:3px ;
- 	width: 90%;
+ 	width: 80%;
  	border: #e8491d 2px solid;
  }
+#answer form .button_1{
+	margin-top: 10px;
+	margin-bottom: 10px;
 
+}
 
 /*footer */
 footer{ 
 	clear: both;
-	position: absolute ;
-	bottom: 0;
+	/*position: absolute ;*/
+	/*bottom: 0;*/
+	margin-bottom: 0;
 	width: 100%;
 	/*background-color: #35424a;*/
 	background:url("../img/img2.jpg") no-repeat;
