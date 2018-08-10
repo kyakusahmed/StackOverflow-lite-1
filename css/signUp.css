@@ -27,13 +27,14 @@ ul{
 
 .button_1{
 	height: 30px;
-	margin :20px;
+	margin:auto;
 	color: #ffffff;
 	padding-left: 20px;
 	padding-right: 20px;
 	background: #e8491d;
 	border-color:#35424a; 
 }
+
 
 /*Header*/
 header {
@@ -110,6 +111,10 @@ header a:hover{
 	color: #ffffff;
 	font-weight: bold;
 	text-decoration:none; 
+}
+
+#register a{
+	color: #e8491d;
 }
 
 #register form{
