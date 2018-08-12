@@ -91,6 +91,7 @@ header a:hover{
 	border: #35424a 4px solid;
 	margin-left:30%;
 	margin-right: 30%
+	min-height:50%;
 	padding-top: 20px;
 	padding-bottom: 10px;
 	width :40%;
@@ -119,6 +120,7 @@ header a:hover{
 
 #register form{
 	min-height: 200px;
+	margin-bottom: 100px;
 
 }
 
