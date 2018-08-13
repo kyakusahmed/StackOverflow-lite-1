@@ -7,6 +7,7 @@ body {
 	font: 15px/1.5 Arial,Helvetica, sans-seriff;
 	padding: 0;
 	margin: 0;
+	/*background-color: #35424a;*/
 	background-color: #f4f4f4;
 
 
@@ -85,19 +86,43 @@ header a:hover{
 	font-weight:bold;
 }
 
+#container2{
+	width: 30%;
+	max-height: 10px;
+	display: inline;
+}
+
+#container2 #remember{
+	float: left;
+	width:10%;
+	height: 5px;
+	margin-top: 10px;
+	margin-left: 20px;
+
+}
+
+#container2 h3{
+	float: right;
+	height: 90%;
+	width:50%;
+	margin-right: 30%;
+	margin-bottom: 10px;
+}
 
 #register{
-	background:url("../img/015.jpg") ;
-	border: #35424a 4px solid;
+	background:url("../img/kybrd.jpeg") ;
+	/*background-color: #35424a;*/
+	/*border: #35424a 2px solid;*/
 	margin-left:30%;
 	margin-right: 30%
+	min-height:50%;
 	padding-top: 20px;
 	padding-bottom: 10px;
 	width :40%;
 
 }
-#register label{
-	color:black;
+#register h3{
+	color:#f4f4f4;
 }
 /*
 #register .box{
@@ -119,6 +144,7 @@ header a:hover{
 
 #register form{
 	min-height: 200px;
+	margin-bottom: 100px;
 
 }
 
@@ -126,7 +152,7 @@ header a:hover{
  	min-height:30px;
  	padding:3px ;
  	width: 90%;
- 	border: #e8491d 2px solid;
+ 	/*border: #e8491d 2px solid;*/
  }
 
 
