@@ -88,7 +88,7 @@ header a:hover{
 /*showcase*/
 #showcase{
 	min-height: 400px;
-	width: 80%;
+	width: 70%;
 	/*background:url("../img/015.jpg") no-repeat;*/
 	/*margin:20px;*/
 	color : black;
@@ -109,13 +109,14 @@ header a:hover{
 #question{
 	margin-top: 20px;
 	padding-top: 20px;
-	width:20%;
+	margin-right: 5px;
+	width:25%;
 	padding-bottom: 10px;
 	float: right;
 }
 #question .box{
 	
-	background:url("../img/015.JPG") no-repeat ;
+	background:url("../img/015.JPG") ;
 	border: #35424a 4px solid;
 }
 
@@ -142,8 +143,7 @@ header a:hover{
 /*footer */
 footer{ 
 	clear: both;
-	position: absolute ;
-	bottom: 0;
+	margin-bottom: 0;
 	width: 100%;
 	/*background-color: #35424a;*/
 	background:url("../img/img2.jpg") no-repeat;
