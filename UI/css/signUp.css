@@ -87,8 +87,8 @@ header a:hover{
 
 
 #register{
-	background:url("../img/015.JPG") ;
-	border: #35424a 4px solid;
+	background:url("../img/kybrd.jpeg") ;
+	/*border: #35424a 4px solid;*/
 	margin-left:30%;
 	margin-right: 30%
 	padding-top: 20px;
@@ -96,8 +96,9 @@ header a:hover{
 	width :40%;
 
 }
-#register label{
-	color:black;
+
+h3{
+	color:#f4f4f4;
 }
 /*
 #register .box{
@@ -126,7 +127,7 @@ header a:hover{
  	min-height:30px;
  	padding:3px ;
  	width: 90%;
- 	border: #e8491d 2px solid;
+ 	/*border: #e8491d 2px solid;*/
  }
 
 
