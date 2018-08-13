@@ -117,8 +117,8 @@ header a:hover{
 }
 #question .box{
 	
-	background:url("../img/015.JPG") ;
-	border: #35424a 4px solid;
+	background:url("../img/kybrd.jpeg") ;
+	/*border: #35424a 4px solid;*/
 }
 
 #question h2{
@@ -137,7 +137,7 @@ header a:hover{
  	min-height:30px;
  	padding:3px ;
  	width: 90%;
- 	border: #e8491d 2px solid;
+ 	/*border: #e8491d 2px solid;*/
  }
 
 
