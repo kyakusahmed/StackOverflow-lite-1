@@ -105,6 +105,11 @@ header a:hover{
 	text-decoration: none;
 }
 
+#showcase img{
+	min-width: auto;
+	min-height:auto;
+}
+
 
 
 aside{
