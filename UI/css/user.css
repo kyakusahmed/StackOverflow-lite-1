@@ -93,11 +93,7 @@ header a:hover{
 /*showcase*/
 #showcase{
 	min-height: 400px;
-<<<<<<< HEAD
-	width: 40%;
-=======
 	width: 25%;
->>>>>>> 1fcf8137b2a5018aa69ee9cebea35565080a9044
 	/*background:url("../img/015.jpg") no-repeat;*/
 	/*margin:20px;*/
 	color : black;
@@ -109,13 +105,6 @@ header a:hover{
 	text-decoration: none;
 }
 
-<<<<<<< HEAD
-
-
-aside{
-	margin-top: 0;
-	width: 50%;
-=======
 #content img{
 	min-width: auto;
 	min-height:auto;
@@ -128,19 +117,14 @@ aside{
 aside{
 	margin-top: 0;
 	width: 60%;
->>>>>>> 1fcf8137b2a5018aa69ee9cebea35565080a9044
 	float: right;
 	display: inline;
 }
 aside .box{
 	min-height:520px;
-<<<<<<< HEAD
-	border: #35424a 4px solid;
-=======
 	margin: 0;
 	padding: 0;
 	/*border: #35424a 4px solid;*/
->>>>>>> 1fcf8137b2a5018aa69ee9cebea35565080a9044
 	/*margin-bottom: 0;*/
 }
 
@@ -151,12 +135,9 @@ aside h2{
 	text-decoration:none; 
 }
 
-<<<<<<< HEAD
-=======
 #activity li{
 	margin-left: 0;
 }
->>>>>>> 1fcf8137b2a5018aa69ee9cebea35565080a9044
 
 
 /*footer */

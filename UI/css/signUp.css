@@ -87,13 +87,8 @@ header a:hover{
 
 
 #register{
-<<<<<<< HEAD
-	background:url("../img/015.jpg") ;
-	border: #35424a 4px solid;
-=======
 	background:url("../img/kybrd.jpeg") ;
 	/*border: #35424a 4px solid;*/
->>>>>>> 1fcf8137b2a5018aa69ee9cebea35565080a9044
 	margin-left:30%;
 	margin-right: 30%
 	padding-top: 20px;
@@ -101,14 +96,10 @@ header a:hover{
 	width :40%;
 
 }
-<<<<<<< HEAD
-#register label{
-	color:black;
-=======
+
 
 h3{
 	color:#f4f4f4;
->>>>>>> 1fcf8137b2a5018aa69ee9cebea35565080a9044
 }
 /*
 #register .box{
@@ -137,12 +128,8 @@ h3{
  	min-height:30px;
  	padding:3px ;
  	width: 90%;
-<<<<<<< HEAD
- 	border: #e8491d 2px solid;
-=======
  	/*border: #e8491d 2px solid;*/
->>>>>>> 1fcf8137b2a5018aa69ee9cebea35565080a9044
- }
+}
 
 
 /*footer */

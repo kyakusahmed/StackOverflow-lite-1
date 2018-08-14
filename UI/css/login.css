@@ -7,10 +7,7 @@ body {
 	font: 15px/1.5 Arial,Helvetica, sans-seriff;
 	padding: 0;
 	margin: 0;
-<<<<<<< HEAD
-=======
 	/*background-color: #35424a;*/
->>>>>>> 1fcf8137b2a5018aa69ee9cebea35565080a9044
 	background-color: #f4f4f4;
 
 
@@ -89,14 +86,6 @@ header a:hover{
 	font-weight:bold;
 }
 
-<<<<<<< HEAD
-
-#register{
-	background:url("../img/015.jpg") ;
-	border: #35424a 4px solid;
-	margin-left:30%;
-	margin-right: 30%
-=======
 #container2{
 	width: 30%;
 	max-height: 10px;
@@ -127,19 +116,15 @@ header a:hover{
 	margin-left:30%;
 	margin-right: 30%
 	min-height:50%;
->>>>>>> 1fcf8137b2a5018aa69ee9cebea35565080a9044
+
 	padding-top: 20px;
 	padding-bottom: 10px;
 	width :40%;
 
 }
-<<<<<<< HEAD
-#register label{
-	color:black;
-=======
+
 #register h3{
 	color:#f4f4f4;
->>>>>>> 1fcf8137b2a5018aa69ee9cebea35565080a9044
 }
 /*
 #register .box{
@@ -161,10 +146,7 @@ header a:hover{
 
 #register form{
 	min-height: 200px;
-<<<<<<< HEAD
-=======
 	margin-bottom: 100px;
->>>>>>> 1fcf8137b2a5018aa69ee9cebea35565080a9044
 
 }
 
@@ -172,11 +154,7 @@ header a:hover{
  	min-height:30px;
  	padding:3px ;
  	width: 90%;
-<<<<<<< HEAD
- 	border: #e8491d 2px solid;
-=======
  	/*border: #e8491d 2px solid;*/
->>>>>>> 1fcf8137b2a5018aa69ee9cebea35565080a9044
  }
 
 
