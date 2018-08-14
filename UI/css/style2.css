@@ -29,8 +29,14 @@ ul{
 	height: 30px;
 	margin :20px;
 	color: #ffffff
+<<<<<<< HEAD
 	padding-left: 20px;
 	padding-right: 20px;
+=======
+	/*padding-left: 20px;
+	padding-right: 20px;*/
+	padding: 5px 20px 5px 20px;
+>>>>>>> 1fcf8137b2a5018aa69ee9cebea35565080a9044
 	background: #e8491d;
 	border-color:#35424a; 
 }
@@ -88,7 +94,11 @@ header a:hover{
 /*showcase*/
 #showcase{
 	min-height: 400px;
+<<<<<<< HEAD
 	width: 80%;
+=======
+	width: 70%;
+>>>>>>> 1fcf8137b2a5018aa69ee9cebea35565080a9044
 	/*background:url("../img/015.jpg") no-repeat;*/
 	/*margin:20px;*/
 	color : black;
@@ -109,14 +119,24 @@ header a:hover{
 #question{
 	margin-top: 20px;
 	padding-top: 20px;
+<<<<<<< HEAD
 	width:20%;
+=======
+	margin-right: 5px;
+	width:25%;
+>>>>>>> 1fcf8137b2a5018aa69ee9cebea35565080a9044
 	padding-bottom: 10px;
 	float: right;
 }
 #question .box{
 	
+<<<<<<< HEAD
 	background:url("../img/015.jpg") no-repeat ;
 	border: #35424a 4px solid;
+=======
+	background:url("../img/kybrd.jpeg") ;
+	/*border: #35424a 4px solid;*/
+>>>>>>> 1fcf8137b2a5018aa69ee9cebea35565080a9044
 }
 
 #question h2{
@@ -135,15 +155,23 @@ header a:hover{
  	min-height:30px;
  	padding:3px ;
  	width: 90%;
+<<<<<<< HEAD
  	border: #e8491d 2px solid;
+=======
+ 	/*border: #e8491d 2px solid;*/
+>>>>>>> 1fcf8137b2a5018aa69ee9cebea35565080a9044
  }
 
 
 /*footer */
 footer{ 
 	clear: both;
+<<<<<<< HEAD
 	position: absolute ;
 	bottom: 0;
+=======
+	margin-bottom: 0;
+>>>>>>> 1fcf8137b2a5018aa69ee9cebea35565080a9044
 	width: 100%;
 	/*background-color: #35424a;*/
 	background:url("../img/img2.jpg") no-repeat;

@@ -115,7 +115,11 @@ header a:hover{
 }
 #question .box{
 	
+<<<<<<< HEAD
 	background:url("../img/015.jpg") no-repeat ;
+=======
+	background:url("../img/015.JPG") no-repeat ;
+>>>>>>> 1fcf8137b2a5018aa69ee9cebea35565080a9044
 	border: #35424a 4px solid;
 }
 

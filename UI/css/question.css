@@ -113,12 +113,23 @@ header a:hover{
 
 #answer .box{
 	/*background: grey;*/
+<<<<<<< HEAD
 	width:100%;
 	/*background:url("../img/img3.jpg") no-repeat ;*/
 	background-color: #35424a;
 	border-top: #35424a 4px solid;
 	margin-bottom: 10px;
 	border-bottom: #35424a 4px solid;
+=======
+	align-self: center;
+	margin-left: 22.5%;
+	width:50%;
+	background:url("../img/kybrd.jpeg") repeat ;
+	/*background-color: #35424a;*/
+	/*border-top: #35424a 4px solid;*/
+	margin-bottom: 10px;
+	/*border-bottom: #35424a 4px solid;*/
+>>>>>>> 1fcf8137b2a5018aa69ee9cebea35565080a9044
 }
 
 #answer h2{
@@ -137,7 +148,11 @@ header a:hover{
  	min-height:20px;
  	padding:3px ;
  	width: 80%;
+<<<<<<< HEAD
  	border: #e8491d 2px solid;
+=======
+ 	/*border: #e8491d 2px solid;*/
+>>>>>>> 1fcf8137b2a5018aa69ee9cebea35565080a9044
  }
 #answer form .button_1{
 	margin-top: 10px;
