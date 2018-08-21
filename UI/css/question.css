@@ -28,7 +28,7 @@ ul{
 .button_1{
 	height: 30px;
 	margin :20px;
-	color: #ffffff
+	color: #ffffff;
 	padding-left: 20px;
 	padding-right: 20px;
 	background: #e8491d;
@@ -112,7 +112,7 @@ header a:hover{
 	font-weight: bold;
 	/* background-color: #35424a; */
 	padding: 0;
-	border : 2px solid #e8491d;
+	border : 2px solid  #e8491d ;
 	/* border-bottom : 2px solid #e8491d; */
 }
 #showcase hr{
@@ -135,8 +135,8 @@ header a:hover{
 	/*background: grey;*/
 	align-self: center;
 	margin-left: 22.5%;
-	width:50%;
-	background:url("../img/kybrd.jpeg") repeat ;
+	width:40%;
+	background:url("../img/kybrd.jpeg")no-repeat ;
 	/*background-color: #35424a;*/
 	/*border-top: #35424a 4px solid;*/
 	margin-bottom: 10px;

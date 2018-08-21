@@ -118,7 +118,7 @@ header a:hover{
 }
 
 #register{
-	background:url("../img/kybrd.jpeg") ;
+	background:url("../img/kybrd.jpeg") round;
 	/*background-color: #35424a;*/
 	/*border: #35424a 2px solid;*/
 	margin-left:30%;
@@ -126,7 +126,7 @@ header a:hover{
 	min-height:60%;
 	padding-top: 20px;
 	padding-bottom: 10px;
-	width :40%;
+	width :35%;
 
 }
 #register h3{

@@ -92,13 +92,13 @@ header a:hover{
 
 
 #register{
-	background:url("../img/kybrd.jpeg") ;
+	background:url("../img/kybrd.jpeg") round ;
 	/*border: #35424a 4px solid;*/
 	margin-left:30%;
-	margin-right: 30%
+	margin-right: 30%;
 	padding-top: 20px;
-	padding-bottom: 10px;
-	width :40%;
+	padding-bottom : 10px;
+	width :35%;
 
 }
 
