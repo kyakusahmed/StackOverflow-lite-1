@@ -65,6 +65,11 @@ header li{
 head #branding{
 	float: left;
 }
+header #branding a{
+	text-decoration: none;
+	text-transform: none;
+	font-size: 20px;
+}
 
 header #branding h1{
 	margin:0;
@@ -130,6 +135,16 @@ h3{
  	/*border: #e8491d 2px solid;*/
  }
 
+ #register #signUp a {
+	text-decoration: none;
+	border-top: 2px solid #35424a;
+	border-left: 2px solid #35424a;
+	border-right: 2px solid black;
+	border-bottom: 2px solid black;
+	color: white;
+	padding: 2%;
+	background-color: #e8491d;
+}
 
 /*footer */
 footer{ 

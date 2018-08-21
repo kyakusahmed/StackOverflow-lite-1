@@ -65,6 +65,12 @@ head #branding{
 	float: left;
 }
 
+header #branding a{
+	text-decoration: none;
+	text-transform: none;
+	font-size: 20px;
+}
+
 header #branding h1{
 	margin:0;
 }
@@ -97,6 +103,20 @@ header a:hover{
 
 #showcase h3{
 	text-decoration: none;
+	/* border-bottom : 2px solid #35424a; */
+	padding: 3px 10px 3px 10px;
+}
+
+#showcase h4{
+	margin:0;
+	font-weight: bold;
+	/* background-color: #35424a; */
+	padding: 0;
+	border : 2px solid #e8491d;
+	/* border-bottom : 2px solid #e8491d; */
+}
+#showcase hr{
+	size: 2px solid #35424a;
 }
 
 /*content*/
