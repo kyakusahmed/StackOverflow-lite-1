@@ -106,6 +106,20 @@ def update_question(questionId):
     return response
 
 
+@app.route('/api/v1/questions/<int:questionId>', methods=['DELETE'])
+def delete_question(questionId):
+    ids = [question['questionId'] for question in questionsList]
+    if questionId in ids:
+        for question in questionsList:
+            if questionId == question['questionId']:
+                questionsList.remove(question)
+        response = Response('', status=200, mimetype='application/json')
+        return response
+    response = Response(json.dumps(['Question not found']), 
+                        status=404, mimetype='application/json')
+    return response
+
+
 
 def valid_question(questionObject):
     if 'topic' in questionObject and 'body' in questionObject:
