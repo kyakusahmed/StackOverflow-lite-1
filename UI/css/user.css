@@ -65,6 +65,13 @@ head #branding{
 	float: left;
 }
 
+header #branding a{
+	text-decoration: none;
+	text-transform: none;
+	font-size: 20px;
+}
+
+
 header #branding h1{
 	margin:0;
 }
@@ -138,6 +145,12 @@ aside h2{
 #activity li{
 	margin-left: 0;
 }
+
+#activity a{
+	text-decoration: none;
+	color: black;
+}
+
 
 
 /*footer */
