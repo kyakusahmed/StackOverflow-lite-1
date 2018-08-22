@@ -8,6 +8,10 @@ from .base import APITestCase
 
 class TestRoutes(APITestCase):
 
+    def test_root_route(self):
+        res = self.client.get('/')
+        self.assertEqual(res.status_code, 200)
+
     def test_user_can_get_questions(self):
         with self.client:
             res = self.client.get('/api/v1/questions')
