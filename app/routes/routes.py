@@ -82,6 +82,29 @@ def add_answer(questionId):
             return response
 
 
+@app.route('/api/v1/questions/<int:questionId>', methods=['PATCH'])
+def update_question(questionId):
+    request_data = request.get_json()
+    updated_question = dict()
+    ids = [question['questionId'] for question in questionsList]
+    
+    if questionId in ids:
+        if "topic" in request_data:
+            updated_question["topic"] = request_data["topic"]
+        if "body" in request_data:
+            updated_question["body"] = request_data["topic"]
+    
+        for question in questionsList:
+            if question["questionId"] == questionId:
+                question.update(updated_question)
+
+        response = Response('', status=204)
+        response.headers['Location'] = "/questions" + str(questionId)
+        return response
+    
+    response = Response(json.dumps(['Question not found']), status=404)
+    return response
+
 
 
 def valid_question(questionObject):
@@ -95,3 +118,4 @@ def valid_answer(answerObject):
         return True
     else:
         return False
+    
