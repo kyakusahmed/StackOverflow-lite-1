@@ -4,32 +4,16 @@ ans_List = [
     {
         'answerId': 1,
         'Qn_Id': 1,
-        'body': '''Lorem ipsum dolor sit amet, consectetur adipiscing
-        elit.Vivamus nec tortor ac purus luctus lobortis id et magna.
-        Pellentesque id odio volutpat, fermentum neque non,
-        vestibulum enim.Vivamus aliquet libero quis orci mattis
-        tincidunt.'''},
+        'body': ""},
     {'answerId': 2,
         'Qn_Id': 2,
-        'body': '''What's programmingLorem ipsum dolor sit amet,
-        consectetur adipiscing elit.Vivamus nec tortor ac purus
-        luctus lobortis id et magna.Pellentesque id odio volutpat,
-        fermentum neque non, vestibulum enim.Vivamus aliquet libero
-        quis orci mattis tincidunt.'''},
+        'body': ""},
     {'answerId': 3,
         'Qn_Id': 3,
-        'body': '''What are data structuresLorem ipsum dolor sit amet,
-        consectetur adipiscing elit.Vivamus nec tortor ac purus luctus
-        lobortis id et magna.Pellentesque id odio volutpat, fermentum
-        neque non, vestibulum enim.Vivamus
-        aliquet libero quis orci mattis tincidunt.'''},
+        'body': ""},
     {'answerId': 4,
         'Qn_Id': 4,
-        'body': '''Lorem ipsum dolor sit amet, consectetur adipiscing
-        elit.Vivamus nec tortor ac purus luctus lobortis id et magna.
-        Pellentesque id odio volutpat, fermentum neque non,
-        vestibulum enim.Vivamus aliquet libero quis orci mattis
-        tincidunt.'''}
+        'body': ""}
 ]
 
 
@@ -53,12 +37,9 @@ def createQnsList():
     and links answers to them'''
 
     QnsList = []
-    body = '''Lorem ipsum dolor sit amet, consectetur adipiscing
-        elit.Vivamus nec tortor ac purus luctus lobortis id et magna.
-        Pellentesque id odio volutpat, fermentum neque non, vestibulum
-        enim.Vivamus aliquet libero quis orci mattis tincidunt.'''
+    body = ""
 
-    topics = [0, 'python', 'comp science', 'AI', 'blockchain', 'ethereum']
+    topics = [0, '', '', '', '', '']
 
     for i in range(1, 6):
         Qn = Question(i, topics[i], body)
@@ -91,10 +72,7 @@ class Answer:
 def createAnsList():
     '''Generates list of five answers'''
     AnsList = []
-    body = '''Lorem ipsum dolor sit amet, consectetur adipiscing
-        elit.Vivamus nec tortor ac purus luctus lobortis id et magna.
-        Pellentesque id odio volutpat, fermentum neque non, vestibulum
-        enim.Vivamus aliquet libero quis orci mattis tincidunt.'''
+    body = ""
 
     l = [question['questionId'] for question in questionsList]
     qnIds = [id for id in l]
