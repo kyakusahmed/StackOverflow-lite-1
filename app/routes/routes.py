@@ -4,6 +4,10 @@ from flask import (Flask, Response, flash, json, jsonify,
 from app import app
 from app.models import Answer, Question, answersList, questionsList
 
+@app.route('/')
+def show_api_works():
+    return jsonify({'Welcome to my app': [{'message': "endpoints work"}]})
+
 
 @app.route('/api/v1/questions', methods=['GET'])
 def get_questions():
