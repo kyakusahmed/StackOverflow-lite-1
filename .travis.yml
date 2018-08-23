@@ -7,7 +7,7 @@ install:
 
 script:
   - pytest
-  - py.test coveralls --cov=tests/
+  
 after_success:
   - coveralls
 
