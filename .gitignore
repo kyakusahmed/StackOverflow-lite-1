@@ -1,4 +1,7 @@
-.pytest_cache/
-__pycache__/
 venv/
+__pycache__/
+app/__pycache__/
+app/routes/__pycache__
 .vscode/
+.vscode/settings.json
+.pytest_cache/
