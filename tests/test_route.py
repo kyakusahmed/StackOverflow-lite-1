@@ -1,4 +1,4 @@
-from flask import json, url_for
+from flask import json
 from tests import app
 
 from .base import APITestCase
