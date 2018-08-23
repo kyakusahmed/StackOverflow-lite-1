@@ -16,8 +16,6 @@ class APITestCase(TestCase):
 
     def setUp(self):
         self.app = app.test_client()
-        self.answersList = createAnsList()
-        self.questionsList = createQnsList()
         
     def tearDown(self):
         pass
@@ -65,7 +63,7 @@ def createQnsList():
 
         QnsList.append(Qn.__repr__())
     return QnsList
-    
+
 questionsList = createQnsList()
 
 

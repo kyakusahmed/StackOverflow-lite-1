@@ -1,7 +1,7 @@
 from flask import json, url_for
 from tests import app
 
-from .base import APITestCase, answersList, questionsList
+from .base import APITestCase
 
 
 class TestRoutes(APITestCase):
