@@ -1,9 +1,9 @@
 from flask import json
-
-from app.models import Answer, Question, answersList, questionsList
 from tests import app
 
-from .base import APITestCase
+from app.models import Answer, Question
+
+from .base import APITestCase, answersList, questionsList
 
 
 class TestModels(APITestCase):

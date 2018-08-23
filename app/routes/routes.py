@@ -11,21 +11,24 @@ def show_api_works():
 
 @app.route('/api/v1/questions', methods=['GET'])
 def get_questions():
-    return jsonify({'questions': questionsList})
+    if questionsList:
+        return jsonify({'questions': questionsList})
+    return jsonify({'messgae': 'No Questions added yet'})
 
 @app.route('/api/v1/questions/<int:questionId>', methods=['GET'])
 def get_question(questionId):
-    for question in questionsList:
-        if question['questionId'] == questionId:
-            temp = {
-                'questionId': question['questionId'],
-                'topic': question['topic'],
-                'body': question['body']
-            }
-            return jsonify(temp)
-    return Response(json.dumps(['Question not Found']), 
-                    status=404, mimetype='application/json')
-
+    if questionsList:
+        for question in questionsList:
+            if question['questionId'] == questionId:
+                temp = {
+                    'questionId': question['questionId'],
+                    'topic': question['topic'],
+                    'body': question['body']
+                }
+                return jsonify(temp)
+        return Response(json.dumps(['Question not Found']), 
+                        status=404, mimetype='application/json')
+    return jsonify({f'Question {questionId}': 'Has not been added yet'})
 
 @app.route('/api/v1/questions', methods=['POST'])
 def add_question():
@@ -56,74 +59,77 @@ def add_question():
 @app.route('/api/v1/questions/<int:questionId>/answers', methods=['POST'])
 def add_answer(questionId):
     request_data = request.get_json()
-    if (valid_answer(request_data)):
-        temp = {
-            'answerId': request_data['answerId'],
-            'Qn_Id': request_data['Qn_Id'],
-            'body': request_data['body']
-        }
-        answersList.append(temp)
-        for question in questionsList:
-            if question['questionId'] == request_data['Qn_Id']:
-                question = Question(question['questionId'], 
-                                    question['topic'], question['body'])
-                question.answers.append(temp)
-
-        response = Response('', status=201, mimetype='application/json')
-        response.headers['location'] = ('answers/' + 
-                                        str(request_data['answerId']))
-        return response
-    
-    else:
-            bad_object = {
-                "error": "Invalid answer object",
-                "hint": '''Request format should be {'answerId':1, 
-                'body': 'this is the body',
-                    'Qn_Id': 2}'''
+    if questionsList:
+        if (valid_answer(request_data)):
+            temp = {
+                'answerId': request_data['answerId'],
+                'Qn_Id': request_data['Qn_Id'],
+                'body': request_data['body']
             }
-            response = Response(json.dumps([bad_object]), 
-                                status=400, mimetype='application/json')
+            answersList.append(temp)
+            for question in questionsList:
+                if question['questionId'] == request_data['Qn_Id']:
+                    question = Question(question['questionId'], 
+                                        question['topic'], question['body'])
+                    question.answers.append(temp)
+
+            response = Response('', status=201, mimetype='application/json')
+            response.headers['location'] = ('answers/' + 
+                                            str(request_data['answerId']))
             return response
+    
+        else:
+                bad_object = {
+                    "error": "Invalid answer object",
+                    "hint": '''Request format should be {'answerId':1, 
+                    'body': 'this is the body',
+                        'Qn_Id': 2}'''
+                }
+                response = Response(json.dumps([bad_object]), 
+                                    status=400, mimetype='application/json')
+                return response
+    return jsonify({f'Attempt to answer Question {questionId}': 
+                    f'Question {questionId} does not exit.'})
 
 
 @app.route('/api/v1/questions/<int:questionId>', methods=['PATCH'])
 def update_question(questionId):
     request_data = request.get_json()
-    updated_question = dict()
-    ids = [question['questionId'] for question in questionsList]
-    
-    if questionId in ids:
-        if "topic" in request_data:
-            updated_question["topic"] = request_data["topic"]
-        if "body" in request_data:
-            updated_question["body"] = request_data["topic"]
-    
-        for question in questionsList:
-            if question["questionId"] == questionId:
-                question.update(updated_question)
+    if questionsList:
+        updated_question = dict()
+        ids = [question['questionId'] for question in questionsList]
+        
+        if questionId in ids:
+            if "topic" in request_data:
+                updated_question["topic"] = request_data["topic"]
+            if "body" in request_data:
+                updated_question["body"] = request_data["topic"]
+        
+            for question in questionsList:
+                if question["questionId"] == questionId:
+                    question.update(updated_question)
 
-        response = Response('', status=204)
-        response.headers['Location'] = "/questions" + str(questionId)
-        return response
-    
+            response = Response('', status=204)
+            response.headers['Location'] = "/questions" + str(questionId)
+            return response 
     response = Response(json.dumps(['Question not found']), status=404)
     return response
 
 
 @app.route('/api/v1/questions/<int:questionId>', methods=['DELETE'])
 def delete_question(questionId):
-    ids = [question['questionId'] for question in questionsList]
-    if questionId in ids:
-        for question in questionsList:
-            if questionId == question['questionId']:
-                questionsList.remove(question)
-        response = Response('', status=200, mimetype='application/json')
-        return response
+    if questionsList:
+        ids = [question['questionId'] for question in questionsList]
+        if questionId in ids:
+            for question in questionsList:
+                if questionId == question['questionId']:
+                    questionsList.remove(question)
+            response = Response('', status=200, mimetype='application/json')
+            return response
     response = Response(json.dumps(['Question not found']), 
                         status=404, mimetype='application/json')
     return response
-
-
+        
 
 def valid_question(questionObject):
     if 'topic' in questionObject and 'body' in questionObject:

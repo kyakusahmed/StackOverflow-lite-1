@@ -13,6 +13,10 @@ the pages are: user.html, question.html, other links are accessible through the 
 pivotal tracker output:
 https://www.pivotaltracker.com/n/projects/2189643
 
+
+[![Coverage Status](https://coveralls.io/repos/github/cdvx/StackOverflow-lite/badge.svg?branch=Challenge-2)](https://coveralls.io/github/cdvx/StackOverflow-lite?branch=Challenge-2)
+
+
 [![Coverage Status](https://coveralls.io/repos/github/cdvx/StackOverflow-lite/badge.png?branch=Challenge-2)](https://coveralls.io/github/cdvx/StackOverflow-lite?branch=Challenge-2)
 
 https://travis-ci.org/cdvx/StackOverflow-lite.png?branch=Challenge-2

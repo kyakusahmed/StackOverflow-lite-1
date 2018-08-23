@@ -1,9 +1,7 @@
-from flask import json
-
-from app.models import answersList, questionsList
+from flask import json, url_for
 from tests import app
 
-from .base import APITestCase
+from .base import APITestCase, answersList, questionsList
 
 
 class TestRoutes(APITestCase):
@@ -46,14 +44,8 @@ class TestRoutes(APITestCase):
             "body": "what is software?"
         }
         res = self.client.patch('/api/v1/questions/4', json=new_question)
-        self.assertEqual(res.status_code, 204)
-        ids = [question['questionId'] for question in questionsList]
-        if 4 not in ids:
-            res = self.client.path('/api/v1/questions/4', json=new_question)
-            self.assertEqual(res.status_code, 404)
+        self.assertEqual(res.status_code, 404)
 
     def test_user_can_delete_question(self):
         res = self.client.delete('/api/v1/questions/5')
-        ids = [question['questionId'] for question in questionsList]
-        if 5 in ids:
-            self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.status_code, 404)
