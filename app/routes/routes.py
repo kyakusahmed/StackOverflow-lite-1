@@ -1,8 +1,9 @@
-from flask import (Flask, Response, flash, json, jsonify,
-                     request, session, url_for)
+from flask import (Flask, Response, flash, json, jsonify, request, session,
+                   url_for)
 
 from app import app
 from app.models import Answer, Question, answersList, questionsList
+
 
 @app.route('/')
 def show_api_works():
@@ -142,4 +143,3 @@ def valid_answer(answerObject):
         return True
     else:
         return False
-    
