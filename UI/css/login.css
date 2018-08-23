@@ -10,7 +10,6 @@ body {
 	/*background-color: #35424a;*/
 	background-color: #f4f4f4;
 
-
 }
 
 /*Global*/
@@ -67,6 +66,11 @@ head #branding{
 	float: left;
 }
 
+header #branding a{
+	text-decoration: none;
+	text-transform: none;
+	font-size: 20px;
+}
 header #branding h1{
 	margin:0;
 }
@@ -109,17 +113,20 @@ header a:hover{
 	margin-bottom: 10px;
 }
 
+#login{
+	min-height: 500px;
+}
+
 #register{
-	background:url("../img/kybrd.jpeg") ;
+	background:url("../img/kybrd.jpeg") round;
 	/*background-color: #35424a;*/
 	/*border: #35424a 2px solid;*/
 	margin-left:30%;
-	margin-right: 30%
-	min-height:50%;
-
+	margin-right: 30%;
+	min-height:60%;
 	padding-top: 20px;
 	padding-bottom: 10px;
-	width :40%;
+	width :35%;
 
 }
 
@@ -156,6 +163,17 @@ header a:hover{
  	width: 90%;
  	/*border: #e8491d 2px solid;*/
  }
+
+#register form a {
+	text-decoration: none;
+	border-top: 2px solid #35424a;
+	border-left: 2px solid #35424a;
+	border-right: 2px solid black;
+	border-bottom: 2px solid black;
+	color: white;
+	padding: 2%;
+	background-color: #e8491d;
+}
 
 
 /*footer */
