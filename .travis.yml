@@ -5,8 +5,6 @@ python:
 install:
   - pip install -r requirements.txt
 
-script:
-  
 after_success:
   - coveralls
 
