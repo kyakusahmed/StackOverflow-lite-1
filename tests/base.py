@@ -4,8 +4,8 @@ from flask import current_app
 from flask_testing import TestCase
 
 from app import app
-from app.routes import routes
 from app.models import Answer, Question
+from app.routes import routes
 from config import Config
 
 
@@ -82,4 +82,3 @@ def createAnsList():
     return AnsList
 
 answersList = createAnsList()
-
