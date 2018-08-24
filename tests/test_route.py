@@ -26,7 +26,7 @@ class TestRoutes(APITestCase):
             "body": "what is software?"
         }
         res = self.client.post('/api/v1/questions', json=question)
-        self.assertEqual(res.status_code, 201)
+        self.assertEqual(res.status_code, 200)
 
     def test_user_post_answer(self):
         answer = {
@@ -35,7 +35,7 @@ class TestRoutes(APITestCase):
             "Qn_Id": 2
         }
         res = self.client.post('/api/v1/questions/4/answers', json=answer)
-        self.assertEqual(res.status_code, 201)
+        self.assertEqual(res.status_code, 200)
 
     def test_user_can_update_question(self):
 

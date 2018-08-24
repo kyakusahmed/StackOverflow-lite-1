@@ -55,7 +55,7 @@ def createQnsList():
     topics = [0, '', '', '', '', '']
 
     for i in range(1, 6):
-        Qn = Question(i, topics[i], body)
+        Qn = Question( topics[i], body)
 
         for answer in ans_List:
             if answer['Qn_Id'] == Qn.id:
@@ -77,7 +77,7 @@ def createAnsList():
     qnIds[:0] = [0]
 
     for i in range(1, 6):
-        Ans = Answer(i, body, qnIds[i])
+        Ans = Answer( body, qnIds[i])
         AnsList.append(Ans.__repr__())
     return AnsList
 
