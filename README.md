@@ -18,7 +18,7 @@ Challenge one output is set up in the gh-pages branch, and hosted on github page
 the pages are: user.html, question.html, other links are accessible through the links on the pages
 
 # Challenge 2:
-API: https://stackoverflow-lite-cdvx.herokuapp.com/
+Heroku links: https://stackoverflow-lite-cdvx.herokuapp.com/
 Endpoints: GET https://stackoverflow-lite-cdvx.herokuapp.com/api/v1/questions
            GET https://stackoverflow-lite-cdvx.herokuapp.com/api/v1/questions/<int:questionId>
            POST https://stackoverflow-lite-cdvx.herokuapp.com/api/v1/questions
