@@ -85,7 +85,7 @@ def add_question():
 def add_answer(questionId):
     request_data = request.get_json()
     if questionsList:
-        print(request_data, 1)
+    
         if (valid_answer(request_data)):
             print(request_data)
             temp = {
@@ -96,7 +96,7 @@ def add_answer(questionId):
             id = answer.answerId
             temp['answerId'] = id
             answersList.append(temp)
-            return jsonify({'msg': f'Auestion {id} posted successfully'})
+            return jsonify({'msg': f'Answer {id} posted successfully'})
     
         else:
                 bad_object = {
@@ -131,7 +131,7 @@ def update_question(questionId):
 
             response = Response('', status=204)
             response.headers['Location'] = "/questions" + str(questionId)
-            return response 
+            return response
     response = Response(json.dumps(['Question not found']), status=404)
     return response
 
@@ -162,7 +162,7 @@ def valid_question(questionObject):
         return False
 
 def valid_answer(answerObject):
-    if 'Qn_Id' in answerObject and 'body' in answerObject :
+    if 'Qn_Id' in answerObject and 'body' in answerObject:
         if answersList:
             for answer in answersList:
                 if answer['body'] != answerObject['body']:
