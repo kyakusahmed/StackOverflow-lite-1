@@ -6,6 +6,8 @@
 
 ![Build](https://travis-ci.org/cdvx/StackOverflow-lite.svg?branch=master)
 
+[![Maintainability](https://api.codeclimate.com/v1/badges/529402579dc667521f19/maintainability)](https://codeclimate.com/github/cdvx/StackOverflow-lite/maintainability)
+
 git hub pages(challenge one) output: 
 https://cdvx.github.io/StackOverflow-lite/UI/user.html
 chalenge one setup:
