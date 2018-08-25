@@ -17,16 +17,19 @@ class TestModels(APITestCase):
                               self.question2.id)
         answersList.append(self.answer1.__repr__())
 
+
     def test_answerList_created_properly(self):
         self.assertEqual(6, len(answersList))
         for answer in answersList:
             self.assertIn('answerId', answer)
             self.assertIn('body', answer)
             self.assertIn('Qn_Id', answer)
-    
+
+
     def test_answers_questions_have_uniqueIds(self):
         self.assertTrue(self.question1.id != self.question2.id)
         self.assertTrue(self.answer1.answerId != self.answer2.answerId)
+
 
     def test_question_answer_relationship(self):
         self.assertTrue(self.question1.id == self.answer1.Qn_Id)
