@@ -9,16 +9,29 @@ from .base import APITestCase, answersList, questionsList
 class TestModels(APITestCase):
 
     def setUp(self):
-        self.question1 = Question(1, 'computers', 'what is python ?')
-        self.answer1 = Answer(1, 'it is a programming language', 1)
-        self.question1.answers.append(self.answer1.__repr__())
+        self.question1 = Question('computers', 'what is python ?')
+        self.question2 = Question('api', 'what is Flask ?')
+        self.answer1 = Answer('it is a programming language', 
+                              self.question1.id)
+        self.answer2 = Answer('it a microframework for building python apps', 
+                              self.question2.id)
+        answersList.append(self.answer1.__repr__())
 
     def test_answerList_created_properly(self):
-        self.assertEqual(5, len(answersList))
+        self.assertEqual(6, len(answersList))
         for answer in answersList:
             self.assertIn('answerId', answer)
             self.assertIn('body', answer)
             self.assertIn('Qn_Id', answer)
+    
+    def test_answers_questions_have_uniqueIds(self):
+        self.assertTrue(self.question1.id != self.question2.id)
+        self.assertTrue(self.answer1.answerId != self.answer2.answerId)
+
+    def test_question_answer_relationship(self):
+        self.assertTrue(self.question1.id == self.answer1.Qn_Id)
+        self.assertTrue(self.answer2.Qn_Id == self.question2.id)
+
 
     def test_questionsList_created_properly(self):
         self.assertEqual(5, len(questionsList))
@@ -26,14 +39,10 @@ class TestModels(APITestCase):
             self.assertIn('questionId', question)
             self.assertIn('topic', question)
             self.assertIn('body', question)
-    
-    def test_questionObject_has_answers_attribute(self):
-        self.assertTrue(self.question1.answers)
-        self.assertTrue(type(self.question1.answers) == list)
-        self.assertTrue(type(self.question1.answers[0]) == dict)        
+        
 
     def test_repr_turnsObject_into_dict(self):
         res1 = self.answer1.__repr__()
         res2 = self.question1.__repr__()
-        self.assertTrue(type(res1))
-        self.assertTrue(type(res2))
+        self.assertTrue(type(res1) == dict)
+        self.assertTrue(type(res2) == dict)

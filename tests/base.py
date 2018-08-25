@@ -24,27 +24,6 @@ class APITestCase(TestCase):
         pass
 
 
-
-
-
-ans_List = [
-
-    {
-        'answerId': 1,
-        'Qn_Id': 1,
-        'body': ""},
-    {'answerId': 2,
-        'Qn_Id': 2,
-        'body': ""},
-    {'answerId': 3,
-        'Qn_Id': 3,
-        'body': ""},
-    {'answerId': 4,
-        'Qn_Id': 4,
-        'body': ""}
-]
-
-
 def createQnsList():
     '''Generates a List of five questions with different topics
     and links answers to them'''
@@ -55,11 +34,7 @@ def createQnsList():
     topics = [0, '', '', '', '', '']
 
     for i in range(1, 6):
-        Qn = Question(i, topics[i], body)
-
-        for answer in ans_List:
-            if answer['Qn_Id'] == Qn.id:
-                Qn.answers.append(answer)
+        Qn = Question( topics[i], body)
 
         QnsList.append(Qn.__repr__())
     return QnsList
@@ -77,7 +52,7 @@ def createAnsList():
     qnIds[:0] = [0]
 
     for i in range(1, 6):
-        Ans = Answer(i, body, qnIds[i])
+        Ans = Answer( body, qnIds[i])
         AnsList.append(Ans.__repr__())
     return AnsList
 
