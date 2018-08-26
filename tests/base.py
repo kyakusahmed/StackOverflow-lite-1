@@ -35,7 +35,6 @@ def createQnsList():
 
     for i in range(1, 6):
         Qn = Question( topics[i], body)
-
         QnsList.append(Qn.__repr__())
     return QnsList
 
@@ -52,7 +51,7 @@ def createAnsList():
     qnIds[:0] = [0]
 
     for i in range(1, 6):
-        Ans = Answer( body, qnIds[i])
+        Ans = Answer(body, qnIds[i])
         AnsList.append(Ans.__repr__())
     return AnsList
 

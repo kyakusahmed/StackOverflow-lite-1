@@ -9,6 +9,7 @@ from .base import APITestCase, answersList, questionsList
 class TestModels(APITestCase):
 
     def setUp(self):
+        
         self.question1 = Question('computers', 'what is python ?')
         self.question2 = Question('api', 'what is Flask ?')
         self.answer1 = Answer('it is a programming language', 

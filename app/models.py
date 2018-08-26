@@ -27,6 +27,7 @@ class Answer:
             'Qn_Id': self.Qn_Id,
             'body': self.body
         }
-        
+
+
 questionsList = []
 answersList = []
