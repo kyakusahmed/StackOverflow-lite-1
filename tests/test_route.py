@@ -19,6 +19,14 @@ class TestRoutes(APITestCase):
         res = self.client.get('/api/v1/questions/2')
         self.assertEqual(res.status_code, 200)
 
+    def test_user_can_get_answer(self):
+        res = self.client.get('/api/v1/questions/2/answers')
+        self.assertEqual(res.status_code, 200)
+
+    def test_user_can_get_answer(self):
+        res = self.client.get('/api/v1/questions/2/answers/3')
+        self.assertEqual(res.status_code, 200)
+
     def test_user_can_post_question(self):
         question = {
             "questionId": 34,
