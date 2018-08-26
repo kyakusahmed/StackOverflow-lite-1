@@ -3,11 +3,14 @@
 [![Test Coverage](https://api.codeclimate.com/v1/badges/a99a88d28ad37a79dbf6/test_coverage)](https://codeclimate.com/github/codeclimate/codeclimate/test_coverage)
 
 
-![Build](https://travis-ci.org/cdvx/StackOverflow-lite.svg?branch=Challenge-2)
+![Build](https://travis-ci.org/cdvx/StackOverflow-lite.svg?branch=Challenge-3)
 
 
-[![Coverage Status](https://coveralls.io/repos/github/cdvx/StackOverflow-lite/badge.svg?branch=Challenge-2)](https://coveralls.io/github/cdvx/StackOverflow-lite?branch=Challenge-2)
+[![Coverage Status](https://coveralls.io/repos/github/cdvx/StackOverflow-lite/badge.svg?branch=Challenge-3)]
+(https://coveralls.io/github/cdvx/StackOverflow-lite?branch=Challenge-2)
 
+
+[![Maintainability](https://api.codeclimate.com/v1/badges/529402579dc667521f19/maintainability)](https://codeclimate.com/github/cdvx/StackOverflow-lite/maintainability)
 
 
 # github pages(challenge one) output: 
