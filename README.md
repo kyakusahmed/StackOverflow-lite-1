@@ -5,8 +5,6 @@
 
 ![Build](https://travis-ci.org/cdvx/StackOverflow-lite.svg?branch=Challenge-3)
 
-![Build](https://travis-ci.org/cdvx/StackOverflow-lite.svg?branch=Challenge-3)
-
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/529402579dc667521f19/maintainability)](https://codeclimate.com/github/cdvx/StackOverflow-lite/maintainability)
 
