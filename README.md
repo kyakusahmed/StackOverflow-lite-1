@@ -7,7 +7,7 @@
 
 
 [![Coverage Status](https://coveralls.io/repos/github/cdvx/StackOverflow-lite/badge.svg?branch=Challenge-3)]
-(https://coveralls.io/github/cdvx/StackOverflow-lite?branch=Challenge-2)
+(https://coveralls.io/github/cdvx/StackOverflow-lite?branch=Challenge-3)
 
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/529402579dc667521f19/maintainability)](https://codeclimate.com/github/cdvx/StackOverflow-lite/maintainability)
