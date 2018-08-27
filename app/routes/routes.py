@@ -1,5 +1,6 @@
-from flask import (Flask, Response, flash, json, jsonify, redirect, request,
-                   url_for)
+from datetime import datetime, timedelta
+
+from flask import Flask, Response, json, jsonify, request, url_for
 from flask_jwt_extended import (JWTManager, create_access_token,
                                 get_jwt_identity, jwt_required)
 
@@ -39,11 +40,15 @@ def login():
             'message': 'Required parameter: password missing!'
         }), 400
 
-    user = [user for user in users if user['username'] == username and user['password'] == password]
+    user = [user for user in users if user['username']
+            == username and user['password'] == password]
     if not user:
         return jsonify({'message': 'Invalid username or password'}), 401
 
-    access_token = create_access_token(identity=username)
+    access_token = create_access_token(
+        identity=username,
+        fresh=timedelta(minutes=30)
+    )
     msg = {'access_token': f'{access_token}'}
 
     return jsonify({f'access token created for user {username}': msg}), 200
@@ -81,14 +86,9 @@ def signup():
                 'password': password
             }
             users.append(user)
-            
-            access_token = create_access_token(identity=username)
-            msg = {'access_token': f'{access_token}'}
-
             return jsonify({
-                'success': f"{username}'s account created succesfully",
-                'info': msg
-                }), 200
+                'success': f"{username}'s account created succesfully"
+            }), 200
 
         return jsonify({
             'message': 'Password does not match repeat_password'
@@ -158,15 +158,18 @@ def add_question():
                 'topic': request_data['topic'],
                 'body': request_data['body']
             }
-            question = Question(temp['topic'], temp['body'])
-            id = question.id
-            temp['questionId'] = id
-            questionsList.append(temp)
+            if len(temp['topic'])!= 0 and len(temp['body'])!=0:
+                question = Question(temp['topic'], temp['body'])
+                id = question.id
+                temp['questionId'] = id
+                questionsList.append(temp)
 
-            return jsonify({
-                'msg': f'Question {id} posted successfully',
-                'Posted by': f'{current_user}'
+                return jsonify({
+                    'msg': f'Question {id} posted successfully',
+                    'Posted by': f'{current_user}'
                 }), 201
+            return jsonify({'msg': 'topic and body fields should not be empty'})
+
         else:
             bad_object = {
                 "error": "Invalid question object",
@@ -179,7 +182,7 @@ def add_question():
     return jsonify({
         'message': 'To post a question, you need to be logged in',
         'info': 'Signup or login, to get acces_token'
-}), 401
+    }), 401
 
 
 @app.route('/api/v1/questions/<int:questionId>/answers', methods=['POST'])
@@ -191,35 +194,37 @@ def add_answer(questionId):
         if questionsList:
 
             if (valid_answer(request_data)):
-                print(request_data)
+
                 temp = {
                     'Qn_Id': request_data['Qn_Id'],
                     'body': request_data['body']
                 }
-                answer = Answer(temp['body'], temp['Qn_Id'])
-                id = answer.answerId
-                temp['answerId'] = id
-                answersList.append(temp)
-                return jsonify({
-                    'msg': f'Answer {id} posted successfully'
-                }), 201
+                if len(temp['Qn_Id'])!=0 and len(temp['body'])!=0:
+                    answer = Answer(temp['body'], temp['Qn_Id'])
+                    id = answer.answerId
+                    temp['answerId'] = id
+                    answersList.append(temp)
+                    return jsonify({
+                        'msg': f'Answer {id} posted successfully'
+                    }), 201
+                return jsonify({'msg': 'body and Qn_Id fields should not be empty'})
             else:
-                    bad_object = {
-                        "error": "Invalid answer object",
-                        "hint": '''Request format should be {
+                bad_object = {
+                    "error": "Invalid answer object",
+                    "hint": '''Request format should be {
                         'body': 'this is the body',
                             'Qn_Id': 2}'''
-                    }
-                    response = Response(json.dumps([bad_object]),
-                                        status=400, mimetype='application/json')
-                    return response
+                }
+                response = Response(json.dumps([bad_object]),
+                                    status=400, mimetype='application/json')
+                return response
         return jsonify({f'Attempt to answer Question {questionId}':
                         f'Question {questionId} does not exist.'}), 404
 
     return jsonify({
         'message': 'To post an answer, you need to be logged in',
         'info': 'Signup or login, to get access_token'
-        }), 401
+    }), 401
 
 
 @app.route('/api/v1/questions/<int:questionId>', methods=['PATCH'])
@@ -237,21 +242,21 @@ def update_question(questionId):
                     updated_question["topic"] = request_data["topic"]
                 if "body" in request_data:
                     updated_question["body"] = request_data["topic"]
+                if len(updated_question['topic'])!=0 and len(updated_question['body'])!=0:
+                    for question in questionsList:
+                        if question["questionId"] == questionId:
+                            question.update(updated_question)
 
-                for question in questionsList:
-                    if question["questionId"] == questionId:
-                        question.update(updated_question)
-
-                response = Response('', status=204)
-                response.headers['Location'] = "/questions" + str(questionId)
-                return response
+                    return jsonify({'msg': f'Question {questionId} updated successfully.'}), 204
+                return jsonify({'msg': 'body and topic fields should not be empty'})
+                
         response = Response(json.dumps(['Question not found']), status=404)
         return response
 
     return jsonify({
         'message': 'To update a question, you need to be logged in',
         'info': 'Signup or login, to get access_token'
-        })
+    })
 
 
 @app.route('/api/v1/questions/<int:questionId>', methods=['DELETE'])
@@ -265,7 +270,8 @@ def delete_question(questionId):
                 for question in questionsList:
                     if questionId == question['questionId']:
                         questionsList.remove(question)
-                response = Response('', status=200, mimetype='application/json')
+                response = Response(
+                    '', status=200, mimetype='application/json')
                 return response
         response = Response(json.dumps(['Question not found']),
                             status=404, mimetype='application/json')
@@ -273,12 +279,13 @@ def delete_question(questionId):
     return jsonify({
         'message': 'To delete a question, you need to be logged in',
         'info': 'Signup or login, to get access_token'
-        }), 401
+    }), 401
 
 
 def valid_username(username):
     for user in users:
-        existing_user = [user['username'] for user in users if user['username'] == username]
+        existing_user = [user['username']
+                         for user in users if user['username'] == username]
         if not existing_user:
             return True
     return False
@@ -288,7 +295,7 @@ def valid_question(questionObject):
     if 'topic' in questionObject and 'body' in questionObject:
         if questionsList:
             for question in questionsList:
-                if question['body'] != questionObject['body']:
+                if question['topic'] != questionObject['topic']:
                     return True
         return True
     else:
@@ -297,10 +304,6 @@ def valid_question(questionObject):
 
 def valid_answer(answerObject):
     if 'Qn_Id' in answerObject and 'body' in answerObject:
-        if answersList:
-            for answer in answersList:
-                if answer['body'] != answerObject['body']:
-                    return True
         return True
     else:
         return False

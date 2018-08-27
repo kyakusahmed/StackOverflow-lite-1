@@ -5,3 +5,4 @@ app/routes/__pycache__
 .vscode/
 .vscode/settings.json
 .pytest_cache/
+.coverage

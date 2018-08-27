@@ -1,5 +1,7 @@
 import uuid
 
+import bcrypt
+
 
 class Question:
     def __init__(self, topic, body):
@@ -26,6 +28,23 @@ class Answer:
             'answerId': self.answerId,
             'Qn_Id': self.Qn_Id,
             'body': self.body
+        }
+
+
+class User:
+    def __init__(self, username, email, password):
+        self.salt = bcrypt.gensalt()
+        self.id = uuid.uuid4().int
+        self.username = username.strip()
+        self.email = email.strip()
+        self.password_hash = bcrypt.hashpw(password, salt)
+    
+    def __repr__(self):
+        return {
+            'username': self.username,
+            'email': self.email,
+            'password': self.password_hash,
+            'user_id': self.id
         }
 
 
