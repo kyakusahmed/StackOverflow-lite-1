@@ -5,8 +5,7 @@ class DatabaseConnection(object):
     def __init__(self):
         try:
             self.connection = psycopg2.connect(
-                "dbname='clvx' user='postgres' host='localhost' password='Tesxting' port='5432'"
-            )
+                "dbname='clvx' user='postgres' host='localhost' password='Tesxting' port='5432'")
             self.connection.autocommit = True
             self.cursor = self.connection.cursor()
             self.queries = []
@@ -22,7 +21,7 @@ class DatabaseConnection(object):
                 email varchar(100) NOT NULL,
                 password_hash varchar(200) NOT NULL,
                 user_id varchar(150) NOT NULL
-            )"""
+            );"""
             self.cursor.execute(create_table_command)
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
@@ -34,8 +33,8 @@ class DatabaseConnection(object):
                 id serial PRIMARY KEY,
                 topic varchar(100) NOT NULL,
                 body varchar(600) NOT NULL,
-                question_id uuid UNIQUE
-            )"""
+                question_id varchar(150) NOT NULL
+            );"""
             self.cursor.execute(create_table_command)
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
@@ -45,12 +44,11 @@ class DatabaseConnection(object):
             self.tablename = 'answers'
             create_table_command = """CREATE TABLE IF NOT EXISTS answers(
                 id serial PRIMARY KEY,
-                Qn_Id uuid UNIQUE,
+                Qn_Id varchar(150) NOT NULL,
                 body varchar(600) NOT NULL,
                 answer_id varchar(150) NOT NULL,
-                prefered boolean,
-                FOREIGN KEY (Qn_Id) REFERENCES questions(question_id)
-            )"""
+                prefered boolean
+            );"""
             self.cursor.execute(create_table_command)
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
@@ -69,7 +67,7 @@ class DatabaseConnection(object):
                     %s,
                     %s,
                     %s
-                )"""
+                );"""
                 self.cursor.execute(insert_command, (
                     data['username'],
                     data['email'],
@@ -85,7 +83,7 @@ class DatabaseConnection(object):
                     %s,
                     %s,
                     %s
-                )"""
+                );"""
                 self.cursor.execute(insert_command, (
                     data['topic'],
                     data['body'],
@@ -102,7 +100,7 @@ class DatabaseConnection(object):
                     %s,
                     %s,
                     %s
-                )"""
+                );"""
                 self.cursor.execute(insert_command, (
                     data['Qn_Id'],
                     data['body'],
@@ -154,12 +152,13 @@ class DatabaseConnection(object):
     
     def drop_table(self, tablename):
         try:
-            drop_table_command = f"DROP TABLE {tablename}"
+            drop_table_command = f"DROP TABLE {tablename} CASCADE"
             self.cursor.execute(drop_table_command)
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
 
 conn = DatabaseConnection()
+#conn.drop_table('answers')
 conn.create_Answers_table()
 conn.create_Users_table()
 conn.create_Questions_table()

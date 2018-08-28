@@ -104,7 +104,7 @@ def get_question(questionId):
     questionsList = conn.query_all('questions')
     if questionsList:
         for question in questionsList:
-            if question[3] == questionId:
+            if int(question[3]) == questionId:
                 temp = {
                     'questionId': question[3],
                     'topic': question[1],
@@ -132,7 +132,7 @@ def get_answer(questionId, answerId):
     if questionsList:
         if answersList:
             for answer in answersList:
-                if answer[3] == answerId:
+                if int(answer[3]) == answerId:
                     temp = {
                         'answerId': answer[3],
                         'Qn_Id': answer[1],
@@ -153,32 +153,40 @@ def add_question():
     current_user = get_jwt_identity()
     if current_user:
         request_data = request.get_json()
-        if (valid_question(request_data)):
+        print(request_data)
+
+        duplicate_check = valid_question(request_data)
+        print(duplicate_check)
+        
+        if duplicate_check[0]:
             temp = {
                 'topic': request_data['topic'],
                 'body': request_data['body']
             }
-            if len(temp['topic']) != 0 and len(temp['body'])!=0:
-                question = Question(temp['topic'], temp['body'])
-                id = question.id
-                temp['questionId'] = id
-                conn.insert_new_record('questions', temp)
 
-                return jsonify({
-                    'msg': f'Question {id} posted successfully',
-                    'Posted by': f'{current_user}'
-                }), 201
-            return jsonify({'msg': 'topic and body fields should not be empty'})
+            question = Question(temp['topic'], temp['body'])
+            id = question.id
+            temp['questionId'] = id
+            conn.insert_new_record('questions', question.__repr__())
+
+            return jsonify({
+                'msg': f'Question {id} posted successfully',
+                'Posted by': f'{current_user}'
+            }), 201
 
         else:
-            bad_object = {
-                "error": "Invalid question object",
-                "hint": '''Request format should be,{'topic': 'python',
-                    'body': 'what is python in programming' }'''
-            }
-            response = Response(json.dumps([bad_object]),
-                                status=400, mimetype='application/json')
-            return response
+            if not duplicate_check[0] and len(duplicate_check) > 1:
+                reason = duplicate_check[1]
+                return jsonify({"error": f"{reason}"})
+            else:
+                bad_object = {
+                    "error": "Invalid question object",
+                    "hint": '''Request format should be,{'topic': 'python',
+                        'body': 'what is python in programming' }'''
+                }
+                response = Response(json.dumps([bad_object]),
+                                    status=400, mimetype='application/json')
+                return response
     return jsonify({
         'message': 'To post a question, you need to be logged in',
         'info': 'Signup or login, to get acces_token'
@@ -204,7 +212,7 @@ def add_answer(questionId):
                     answer = Answer(temp['body'], temp['Qn_Id'])
                     id = answer.answerId
                     temp['answerId'] = id
-                    conn.insert_new_record('answers', temp)
+                    conn.insert_new_record('answers', answer.__repr__())
 
                     return jsonify({
                         'msg': f'Answer {id} posted successfully'
@@ -262,8 +270,10 @@ def update_question(questionId, topic, body, question_id):
                                 question_id,
                                 questionId
                             )
-                    return jsonify({'msg': f'Question {questionId} updated successfully.'}), 204
-                return jsonify({'msg': 'body and topic fields should not be empty'})
+                    return jsonify({
+                        'msg': f'Question {questionId} updated successfully.'}), 204
+                return jsonify({
+                    'msg': 'body and topic fields should not be empty'})
                 
         response = Response(json.dumps(['Question not found']), status=404)
         return response
@@ -313,17 +323,35 @@ def valid_username(username):
 
 
 def valid_question(questionObject):
-    if 'topic' in questionObject and 'body' in questionObject:
+    if 'topic' and 'body' in questionObject.keys():
         questionsList = conn.query_all('questions')
-        for question in questionsList:
-            if question['topic'] != questionObject['topic']:
-                    return True
-    else:
-        return False
+        input_topic = questionObject['topic']
+        input_body = questionObject['body']
+        empty_field = len(input_topic.strip()) and len(input_body.strip()) == 0
+        if empty_field:
+                    value = (False, "Question topic or body should not be empty!")
+                    return value
+        if questionsList:
+            topics = [question[1] for question in questionsList if question[1] == input_topic]
 
+            if len(topics) != 0:
+                value = (False, "Question topic already exists!")
+                return value                
+            else:
+                if len(topics) == 0:
+                    return (True, )
+    else:
+        if 'topic' or 'body' not in questionObject.keys():
+            return (False, )
+ 
 
 def valid_answer(answerObject):
     if 'Qn_Id' in answerObject and 'body' in answerObject:
-        return True
+        input_QnId = answerObject['Qn_Id']
+        input_body = answerObject['body']
+        empty_field = len(input_QnId) and len(input_body.strip()) == 0
+        if empty_field:
+            return (False, "Answer body should not be empty!")
+        return (True, )
     else:
-        return False
+        return (False, )
