@@ -18,17 +18,22 @@ class Question:
 
 
 class Answer:
-    def __init__(self, body, Qn_Id):
+    def __init__(self, body, Qn_Id, pref=False):
         self.answerId = uuid.uuid4().int
         self.body = body.strip()
         self.Qn_Id = Qn_Id
+        self.prefered = pref
 
     def __repr__(self):
         return {
             'answerId': self.answerId,
             'Qn_Id': self.Qn_Id,
-            'body': self.body
+            'body': self.body,
+            'prefered': self.prefered
         }
+
+    def prefer_answer(self, answer):
+        answer.prefered = True
 
 
 class User:
@@ -37,7 +42,7 @@ class User:
         self.id = uuid.uuid4().int
         self.username = username.strip()
         self.email = email.strip()
-        self.password_hash = bcrypt.hashpw(password, salt)
+        self.password_hash = bcrypt.hashpw(password.encode('utf8'), self.salt)
     
     def __repr__(self):
         return {
@@ -48,5 +53,4 @@ class User:
         }
 
 
-questionsList = []
-answersList = []
+

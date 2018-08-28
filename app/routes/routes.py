@@ -1,25 +1,18 @@
 from datetime import datetime, timedelta
 
+import bcrypt
 from flask import Flask, Response, json, jsonify, request, url_for
 from flask_jwt_extended import (JWTManager, create_access_token,
                                 get_jwt_identity, jwt_required)
 
 from app import app
-from app.models import Answer, Question, answersList, questionsList
+from app.models import Answer, Question, User
+from connect import conn
 
 
 @app.route('/')
 def show_api_works():
     return jsonify({'Welcome to my app': [{'message': "endpoints work"}]})
-
-
-users = [
-    {
-        'username': 'Kangol',
-        'email': 'Kangol@grizzly.com',
-        'password': 'Kogoliz'
-    }
-]
 
 
 @app.route('/api/v1/auth/login', methods=['POST'])
@@ -40,8 +33,10 @@ def login():
             'message': 'Required parameter: password missing!'
         }), 400
 
-    user = [user for user in users if user['username']
-            == username and user['password'] == password]
+    users = conn.query_all('users')
+    user = [user for user in users if user[1]
+            == username and user[3]
+            == bcrypt.hashpw(password.encode('utf8'), user[3])]
     if not user:
         return jsonify({'message': 'Invalid username or password'}), 401
 
@@ -59,7 +54,7 @@ def signup():
     if not request.is_json:
         return jsonify({'message': 'JSON missing in request!'}), 400
 
-    username = request.args.get('username', None)
+    username = request.args.get('username', None).split()
     email = request.args.get('email', None)
     password = request.args.get('password', None)
     repeat_password = request.args.get('repeat_password', None)
@@ -76,16 +71,17 @@ def signup():
         if not repeat_password:
             msg = 'Required parameter: repeat_password missing!'
             return jsonify({'message': f'{msg}'}), 400
-
+    users = conn.query_all('users')
+    print(users)
+    if len(username) > 1:
+        username_ = username[0] + " " + username[1]
+        print(username_)
+    username = username[0]
     if valid_username(username):
 
         if repeat_password == password:
-            user = {
-                'username': username,
-                'email': email,
-                'password': password
-            }
-            users.append(user)
+            user = User(username, email, password)
+            conn.insert_new_record('users', user.__repr__())
             return jsonify({
                 'success': f"{username}'s account created succesfully"
             }), 200
@@ -98,6 +94,7 @@ def signup():
 
 @app.route('/api/v1/questions', methods=['GET'])
 def get_questions():
+    questionsList = conn.query_all('questions')
     if questionsList:
         return jsonify({'questions': questionsList}), 200
     return jsonify({'message': 'No Questions added yet'}), 404
@@ -105,13 +102,14 @@ def get_questions():
 
 @app.route('/api/v1/questions/<int:questionId>', methods=['GET'])
 def get_question(questionId):
+    questionsList = conn.query_all('questions')
     if questionsList:
         for question in questionsList:
-            if question['questionId'] == questionId:
+            if question[3] == questionId:
                 temp = {
-                    'questionId': question['questionId'],
-                    'topic': question['topic'],
-                    'body': question['body']
+                    'questionId': question[3],
+                    'topic': question[1],
+                    'body': question[2]
                 }
                 return jsonify(temp), 200
         return Response(json.dumps(['Question not Found']),
@@ -121,6 +119,7 @@ def get_question(questionId):
 
 @app.route('/api/v1/questions/<int:questionId>/answers', methods=['GET'])
 def get_answers(questionId):
+    answersList = conn.query_all('answers')
     if answersList:
         return jsonify({'answers': answersList}), 200
     return jsonify({'message': 'No Answers added yet'}), 404
@@ -129,14 +128,16 @@ def get_answers(questionId):
 @app.route('/api/v1/questions/<int:questionId>/answers/<int:answerId>',
            methods=['GET'])
 def get_answer(questionId, answerId):
+    questionsList = conn.query_all('questions')
+    answersList = conn.query_all('answers')
     if questionsList:
         if answersList:
             for answer in answersList:
-                if answer['answerId'] == answerId:
+                if answer[3] == answerId:
                     temp = {
-                        'answerId': answer['answerId'],
-                        'Qn_Id': answer['Qn_Id'],
-                        'body': answer['body']
+                        'answerId': answer[3],
+                        'Qn_Id': answer[1],
+                        'body': answer[2]
                     }
                     return jsonify(temp), 200
             return Response(json.dumps(['Answer not Found']),
@@ -162,7 +163,7 @@ def add_question():
                 question = Question(temp['topic'], temp['body'])
                 id = question.id
                 temp['questionId'] = id
-                questionsList.append(temp)
+                conn.insert_new_record('questions', temp)
 
                 return jsonify({
                     'msg': f'Question {id} posted successfully',
@@ -191,6 +192,7 @@ def add_answer(questionId):
     current_user = get_jwt_identity()
     if current_user:
         request_data = request.get_json()
+        questionsList = conn.query_all('questions')
         if questionsList:
 
             if (valid_answer(request_data)):
@@ -203,7 +205,8 @@ def add_answer(questionId):
                     answer = Answer(temp['body'], temp['Qn_Id'])
                     id = answer.answerId
                     temp['answerId'] = id
-                    answersList.append(temp)
+                    conn.insert_new_record('answers', temp)
+
                     return jsonify({
                         'msg': f'Answer {id} posted successfully'
                     }), 201
@@ -229,13 +232,14 @@ def add_answer(questionId):
 
 @app.route('/api/v1/questions/<int:questionId>', methods=['PATCH'])
 @jwt_required
-def update_question(questionId):
+def update_question(questionId, topic, body, question_id):
     current_user = get_jwt_identity()
     if current_user:
         request_data = request.get_json()
+        questionsList = conn.query_all('questions')
         if questionsList:
             updated_question = dict()
-            ids = [question['questionId'] for question in questionsList]
+            ids = [question[3] for question in questionsList]
 
             if questionId in ids:
                 if "topic" in request_data:
@@ -245,8 +249,20 @@ def update_question(questionId):
                 if len(updated_question['topic'])!=0 and len(updated_question['body'])!=0:
                     for question in questionsList:
                         if question["questionId"] == questionId:
-                            question.update(updated_question)
-
+                            conn.update_entry(
+                                'questions',
+                                topic,
+                                updated_question['topic'],
+                                question_id,
+                                questionId
+                            )
+                            conn.update_entry(
+                                'questions',
+                                body,
+                                updated_question['body'],
+                                question_id,
+                                questionId
+                            )
                     return jsonify({'msg': f'Question {questionId} updated successfully.'}), 204
                 return jsonify({'msg': 'body and topic fields should not be empty'})
                 
@@ -261,15 +277,17 @@ def update_question(questionId):
 
 @app.route('/api/v1/questions/<int:questionId>', methods=['DELETE'])
 @jwt_required
-def delete_question(questionId):
+def delete_question(questionId, question_id):
     current_user = get_jwt_identity()
     if current_user:
+        questionsList = conn.query_all('questions')
         if questionsList:
-            ids = [question['questionId'] for question in questionsList]
+            ids = [question[3] for question in questionsList]
             if questionId in ids:
                 for question in questionsList:
-                    if questionId == question['questionId']:
+                    if questionId == question[3]:
                         questionsList.remove(question)
+                        conn.delete_entry('questions', question_id, questionId)
                 response = Response(
                     '', status=200, mimetype='application/json')
                 return response
@@ -283,21 +301,24 @@ def delete_question(questionId):
 
 
 def valid_username(username):
-    for user in users:
-        existing_user = [user['username']
-                         for user in users if user['username'] == username]
-        if not existing_user:
-            return True
+    users = conn.query_all('users')
+    if len(users) != 0:
+        for user in users:
+            existing_user = [user[1]
+                             for user in users if user[1] == username]
+            if not existing_user:
+                return True
+    elif len(users) == 0:
+        return True
     return False
 
 
 def valid_question(questionObject):
     if 'topic' in questionObject and 'body' in questionObject:
-        if questionsList:
-            for question in questionsList:
-                if question['topic'] != questionObject['topic']:
+        questionsList = conn.query_all('questions')
+        for question in questionsList:
+            if question['topic'] != questionObject['topic']:
                     return True
-        return True
     else:
         return False
 
