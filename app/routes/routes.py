@@ -71,8 +71,7 @@ def signup():
         if not repeat_password:
             msg = 'Required parameter: repeat_password missing!'
             return jsonify({'message': f'{msg}'}), 400
-    users = conn.query_all('users')
-    print(users)
+    
     if len(username) > 1:
         username_ = username[0] + " " + username[1]
         print(username_)
