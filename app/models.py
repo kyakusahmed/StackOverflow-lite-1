@@ -1,6 +1,7 @@
 import uuid
 
 import bcrypt
+from werkzeug.security import generate_password_hash
 
 
 class Question:
@@ -42,7 +43,7 @@ class User:
         self.id = uuid.uuid4().int
         self.username = username.strip()
         self.email = email.strip()
-        self.password_hash = bcrypt.hashpw(password.encode('utf8'), self.salt)
+        self.password_hash = generate_password_hash(password)
     
     def __repr__(self):
         return {
@@ -51,6 +52,3 @@ class User:
             'password': self.password_hash,
             'user_id': self.id
         }
-
-
-

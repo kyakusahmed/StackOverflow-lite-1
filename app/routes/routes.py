@@ -5,6 +5,7 @@ from flask import Flask, Response, json, jsonify, request, url_for
 from flask_jwt_extended import (JWTManager, create_access_token,
                                 get_jwt_identity, jwt_required)
 
+from werkzeug.security import check_password_hash
 from app import app
 from app.models import Answer, Question, User
 from connect import conn
@@ -34,15 +35,13 @@ def login():
         }), 400
 
     users = conn.query_all('users')
-    user = [user for user in users if user[1]
-            == username and user[3]
-            == bcrypt.hashpw(password.encode('utf8'), user[3])]
+    user = [user for user in users if check_password_hash(user[3], password) and user[1] == username]
     if not user:
         return jsonify({'message': 'Invalid username or password'}), 401
 
     access_token = create_access_token(
         identity=username,
-        fresh=timedelta(minutes=30)
+        fresh=timedelta(minutes=60)
     )
     msg = {'access_token': f'{access_token}'}
 
@@ -159,7 +158,7 @@ def add_question():
                 'topic': request_data['topic'],
                 'body': request_data['body']
             }
-            if len(temp['topic'])!= 0 and len(temp['body'])!=0:
+            if len(temp['topic']) != 0 and len(temp['body'])!=0:
                 question = Question(temp['topic'], temp['body'])
                 id = question.id
                 temp['questionId'] = id
