@@ -7,6 +7,7 @@ from app import app
 from app.models import Answer, Question
 from app.routes import routes
 from config import Config
+from connect import DatabaseConnection
 
 
 class APITestCase(TestCase):

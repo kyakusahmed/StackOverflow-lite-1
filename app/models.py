@@ -33,9 +33,6 @@ class Answer:
             'prefered': self.prefered
         }
 
-    def prefer_answer(self):
-        self.prefered = True
-
 
 class User:
     def __init__(self, username, email, password):

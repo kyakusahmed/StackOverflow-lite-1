@@ -106,6 +106,7 @@ def get_questions():
 @app.route('/api/v1/questions/<int:questionId>', methods=['GET'])
 def get_question(questionId):
     questionsList = conn.query_all('questions')
+    
     if questionsList:
         for question in questionsList:
             if int(question[3]) == questionId:
@@ -117,7 +118,7 @@ def get_question(questionId):
                 return jsonify(temp), 200
         return Response(json.dumps(['Question not Found']),
                         status=404, mimetype='application/json')
-    return jsonify({f'Question {questionId}': 'Has not been added yet'}), 200
+    return jsonify({f'Question {questionId}': 'does not exist.'}), 200
 
 
 @app.route('/api/v1/questions/<int:questionId>/answers', methods=['GET'])

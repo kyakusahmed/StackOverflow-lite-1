@@ -46,7 +46,6 @@ class TestRoutes(APITestCase):
             "body": "what is software?",
             "Qn_Id": 2
         }
-        
         res = self.client.post('/api/v1/questions/4/answers', json=answer)
         self.assertEqual(res.status_code, 401)
 

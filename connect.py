@@ -1,11 +1,13 @@
 import psycopg2
 
+DSN_APP = "dbname='clvx' user='postgres' host='localhost' password='Tesxting' port='5432'"
+DSN_TESTING = "dbname='test_db' user='postgres' host='localhost' password='Tesxting' port='5432'"
+
 
 class DatabaseConnection(object):
     def __init__(self):
         try:
-            self.connection = psycopg2.connect(
-                "dbname='clvx' user='postgres' host='localhost' password='Tesxting' port='5432'")
+            self.connection = psycopg2.connect(DSN_APP)
             self.connection.autocommit = True
             self.cursor = self.connection.cursor()
             self.last_ten_queries = []
@@ -173,17 +175,10 @@ class DatabaseConnection(object):
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
 
+
+
 conn = DatabaseConnection()
 #conn.drop_table('answers')
 conn.create_Answers_table()
 conn.create_Users_table()
 conn.create_Questions_table()
-
-# if not conn.tablename == 'users':
-#     conn.create_Users_table()
-# elif not conn.tablename == 'questions':
-#     conn.create_Questions_table()
-# elif not conn.tablename == 'answers':
-#     conn.create_Answers_table()
-# else:
-#     pass
