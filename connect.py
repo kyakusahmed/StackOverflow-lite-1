@@ -139,21 +139,30 @@ class DatabaseConnection(object):
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
 
-    # def update_answer(self, new_body, id_value):
-    #     try:    
-    #         update_command = f"""UPDATE answers
-    #                             SET body ={new_body}
-    #                             WHERE Qn_Id ={id_value}"""
-    #         self.cursor.execute(update_command)
-    #     except (Exception, psycopg2.DatabaseError) as error:
-    #         print(error)
+    def update_answer(self, answerId):
+        try:    
+            update_command = """UPDATE answers SET prefered = %s WHERE answer_id = %s"""
+            self.cursor.execute(update_command, (True, str(answerId)))
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+
     
-    def delete_entry(self, tablename,
-                     identifier, id_value):
+    def delete_entry(self, tablename, id_value):
         try:
-            delete_command = """DELETE {tablename}
-                                WHERE {identifier} = {id_value}"""
-            self.cursor.execute(delete_command)
+            if tablename == 'questions':
+                delete_command = """DELETE FROM questions
+                                    WHERE question_id = %s"""
+                self.cursor.execute(delete_command, (id_value, ))
+
+            if tablename == 'answers':
+                delete_command = """DELETE FROM answers
+                                    WHERE answer_id = %s"""
+                self.cursor.execute(delete_command, (id_value, ))
+
+            if tablename == 'users':
+                delete_command = """DELETE FROM users
+                                    WHERE user_id = %s"""
+                self.cursor.execute(delete_command, (id_value, ))
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
     

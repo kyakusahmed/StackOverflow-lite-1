@@ -117,7 +117,7 @@ def get_question(questionId):
                 return jsonify(temp), 200
         return Response(json.dumps(['Question not Found']),
                         status=404, mimetype='application/json')
-    return jsonify({f'Question {questionId}': 'Has not been added yet'}), 404
+    return jsonify({f'Question {questionId}': 'Has not been added yet'}), 200
 
 
 @app.route('/api/v1/questions/<int:questionId>/answers', methods=['GET'])
@@ -248,6 +248,50 @@ def add_answer(questionId):
     }), 401
 
 
+@app.route('/api/v1/questions/<int:questionId>/answers/<int:answerId>', methods=['PUT'])
+@jwt_required
+def select_answer_as_preferred(questionId, answerId):
+    current_user = get_jwt_identity()
+    if current_user:
+        request_data = request.get_json()
+        questionsList = conn.query_all('questions')
+
+        if questionsList:
+            answer_check = valid_answer(request_data)
+            ids = [int(qn[3]) for qn in questionsList]
+            if answer_check[0] and request_data['Qn_Id'] in ids:
+        
+                conn.update_answer(str(answerId))
+
+                return jsonify({
+                    'msg': f"Answer {answerId} marked as preferred"
+                }), 201
+            # return jsonify({'msg': 'body and Qn_Id fields should not be empty'})
+            else:
+
+                if not answer_check[0] and len(answer_check) > 1:
+                    reason = answer_check[1]
+                    return jsonify({"error": f"{reason}"})
+                else:
+                    bad_object = {
+                        "error": "Invalid answer object",
+                        "hint": '''Request format should be {
+                            'body': 'this is the body',
+                                'Qn_Id': 2}''',
+                        "hint2": f"Qn_Id should correspond with {questionId}"
+                    }
+                    response = Response(json.dumps([bad_object]),
+                                            status=400, mimetype='application/json')
+                    return response
+        return jsonify({f'Attempt to select answer to Question {questionId} as prefered':
+                        f'Question {questionId} does not exist.'}), 404
+
+    return jsonify({
+        'message': 'To post an answer, you need to be logged in',
+        'info': 'Signup or login, to get access_token'
+    }), 401
+
+
 @app.route('/api/v1/questions/<int:questionId>', methods=['PATCH'])
 @jwt_required
 def update_question(questionId):
@@ -284,20 +328,22 @@ def update_question(questionId):
 
 @app.route('/api/v1/questions/<int:questionId>', methods=['DELETE'])
 @jwt_required
-def delete_question(questionId, question_id):
+def delete_question(questionId):
     current_user = get_jwt_identity()
     if current_user:
         questionsList = conn.query_all('questions')
         if questionsList:
-            ids = [question[3] for question in questionsList]
+            ids = [int(question[3]) for question in questionsList]
             if questionId in ids:
+                print('yeah')
                 for question in questionsList:
-                    if questionId == question[3]:
+                    if questionId == int(question[3]):
                         questionsList.remove(question)
-                        conn.delete_entry('questions', question_id, questionId)
-                response = Response(
-                    '', status=200, mimetype='application/json')
-                return response
+                        conn.delete_entry('questions', str(questionId))
+                        message = {'success': f"Question {questionId} deleted successfully!"}
+                        response = Response(
+                            json.dumps(message), status=202, mimetype='application/json')
+                        return response
         response = Response(json.dumps(['Question not found']),
                             status=404, mimetype='application/json')
         return response
@@ -360,3 +406,25 @@ def valid_answer(answerObject):
         return (True, )
     else:
         return (False, )
+
+@app.errorhandler(500)
+def internal_sserver_error(e):
+    msg = "Sorry,we are experiencing some technical difficulties"
+    msg2 = "Please report this to cedriclusiba@gmail.com and check back with us soon"
+    return jsonify({'error': msg, "hint": msg2}), 500
+
+@app.errorhandler(404)
+def url_unknown(e):
+    return jsonify({"error": "Sorry, resource you are looking for does not exist"}), 404
+
+@app.errorhandler(405)
+def method_not_allowed(e):
+    return jsonify({'error': "Sorry, this action is not supported for this url"}), 405
+
+@app.errorhandler(403)
+def forbidden_resource(e):
+    return jsonify({'error': "Sorry, resource you are trying to access is forbidden"}), 403
+
+@app.errorhandler(410)
+def deleted_resource(e):
+    return jsonify({'error': "Sorry, this resource was deleted"}), 410

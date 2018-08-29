@@ -33,8 +33,8 @@ class Answer:
             'prefered': self.prefered
         }
 
-    def prefer_answer(self, answer):
-        answer.prefered = True
+    def prefer_answer(self):
+        self.prefered = True
 
 
 class User:
