@@ -8,7 +8,7 @@ class DatabaseConnection(object):
                 "dbname='clvx' user='postgres' host='localhost' password='Tesxting' port='5432'")
             self.connection.autocommit = True
             self.cursor = self.connection.cursor()
-            self.queries = []
+            self.last_ten_queries = []
         except:
             print("Cannot connect to database.")   
 
@@ -122,9 +122,9 @@ class DatabaseConnection(object):
             if items:
                 for item in items:
                     queries.append(item)
-                    if len(self.queries) == 11:
-                        self.queries.pop()
-                        self.queries.append(item)
+                    if len(self.last_ten_queries) == 11:
+                        self.last_ten_queries.pop()
+                        self.last_ten_queries.append(item)
                 return queries
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
@@ -139,19 +139,19 @@ class DatabaseConnection(object):
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
 
-    def update_answer(self, new_body, id_value):
-        try:    
-            update_command = f"""UPDATE answers
-                                SET body ={new_body}
-                                WHERE Qn_Id ={id_value}"""
-            self.cursor.execute(update_command)
-        except (Exception, psycopg2.DatabaseError) as error:
-            print(error)
+    # def update_answer(self, new_body, id_value):
+    #     try:    
+    #         update_command = f"""UPDATE answers
+    #                             SET body ={new_body}
+    #                             WHERE Qn_Id ={id_value}"""
+    #         self.cursor.execute(update_command)
+    #     except (Exception, psycopg2.DatabaseError) as error:
+    #         print(error)
     
     def delete_entry(self, tablename,
                      identifier, id_value):
         try:
-            delete_command = f"""DELETE {tablename}
+            delete_command = """DELETE {tablename}
                                 WHERE {identifier} = {id_value}"""
             self.cursor.execute(delete_command)
         except (Exception, psycopg2.DatabaseError) as error:

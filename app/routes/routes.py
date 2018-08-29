@@ -53,7 +53,7 @@ def signup():
     if not request.is_json:
         return jsonify({'message': 'JSON missing in request!'}), 400
 
-    username = request.args.get('username', None).split()
+    username = str(request.args.get('username', None)).split()
     email = request.args.get('email', None)
     password = request.args.get('password', None)
     repeat_password = request.args.get('repeat_password', None)
@@ -62,33 +62,37 @@ def signup():
         return jsonify({
             'message': 'Required parameter: username missing!'
         }), 400
-    elif not email:
-        return jsonify({'message': 'Required parameter: email missing!'}), 400
-    elif not password:
-        return jsonify({'message': 'Required parameter: email missing!'}), 400
     else:
-        if not repeat_password:
-            msg = 'Required parameter: repeat_password missing!'
-            return jsonify({'message': f'{msg}'}), 400
-    users = conn.query_all('users')
-    print(users)
-    if len(username) > 1:
-        username_ = username[0] + " " + username[1]
-        print(username_)
-    username = username[0]
-    if valid_username(username):
+        if username:
+            if len(username) > 1:
+                username_ = username[0] + " " + username[1]
+                username = username_
+                if not valid_username(username):
+                    return jsonify({'message': f'username {username} already taken!'}), 401
+            elif len(username) == 1:
+                username = username[0]
+                if not valid_username(username):
+                    return jsonify({'message': f'username {username} already taken!'}), 401
+            if not email:
+                return jsonify({'message': 'Required parameter: email missing!'}), 400
+            elif not password:
+                return jsonify({'message': 'Required parameter: password missing!'}), 400
+            else:
+                if not repeat_password:
+                    msg = 'Required parameter: repeat_password missing!'
+                    return jsonify({'message': f'{msg}'}), 400
 
-        if repeat_password == password:
-            user = User(username, email, password)
-            conn.insert_new_record('users', user.__repr__())
-            return jsonify({
-                'success': f"{username}'s account created succesfully"
-            }), 200
-
-        return jsonify({
-            'message': 'Password does not match repeat_password'
-        }), 401
-    return jsonify({'message': f'username {username} already taken!'}), 401
+            if repeat_password == password:
+                user = User(username, email, password)
+                conn.insert_new_record('users', user.__repr__())
+                return jsonify({
+                    'success': f"{username}'s account created succesfully"
+                }), 200
+            else:
+                if repeat_password != password:
+                    return jsonify({
+                        'message': 'Password does not match repeat_password'
+                    }), 401
 
 
 @app.route('/api/v1/questions', methods=['GET'])
@@ -120,8 +124,10 @@ def get_question(questionId):
 def get_answers(questionId):
     answersList = conn.query_all('answers')
     if answersList:
-        return jsonify({'answers': answersList}), 200
-    return jsonify({'message': 'No Answers added yet'}), 404
+        for answer in answersList:
+            if int(answer[1]) == questionId:
+                return jsonify({'answers': answersList}), 200
+    return jsonify({'message': f'No Answers added yet for question {questionId}'}), 404
 
 
 @app.route('/api/v1/questions/<int:questionId>/answers/<int:answerId>',
@@ -201,33 +207,38 @@ def add_answer(questionId):
         request_data = request.get_json()
         questionsList = conn.query_all('questions')
         if questionsList:
-
-            if (valid_answer(request_data)):
-
+            answer_check = valid_answer(request_data)
+            ids = [int(qn[3]) for qn in questionsList]
+            if answer_check[0] and request_data['Qn_Id'] in ids:
                 temp = {
                     'Qn_Id': request_data['Qn_Id'],
                     'body': request_data['body']
                 }
-                if len(temp['Qn_Id'])!=0 and len(temp['body'])!=0:
-                    answer = Answer(temp['body'], temp['Qn_Id'])
-                    id = answer.answerId
-                    temp['answerId'] = id
-                    conn.insert_new_record('answers', answer.__repr__())
+                answer = Answer(temp['body'], temp['Qn_Id'])
+                id = answer.answerId
+                temp['answerId'] = id
+                conn.insert_new_record('answers', answer.__repr__())
 
-                    return jsonify({
-                        'msg': f'Answer {id} posted successfully'
-                    }), 201
-                return jsonify({'msg': 'body and Qn_Id fields should not be empty'})
+                return jsonify({
+                    'msg': f'Answer {id} posted successfully'
+                }), 201
+            # return jsonify({'msg': 'body and Qn_Id fields should not be empty'})
             else:
-                bad_object = {
-                    "error": "Invalid answer object",
-                    "hint": '''Request format should be {
-                        'body': 'this is the body',
-                            'Qn_Id': 2}'''
-                }
-                response = Response(json.dumps([bad_object]),
-                                    status=400, mimetype='application/json')
-                return response
+
+                if not answer_check[0] and len(answer_check) > 1:
+                    reason = answer_check[1]
+                    return jsonify({"error": f"{reason}"})
+                else:
+                    bad_object = {
+                        "error": "Invalid answer object",
+                        "hint": '''Request format should be {
+                            'body': 'this is the body',
+                                'Qn_Id': 2}''',
+                        "hint2": f"Qn_Id should correspond with {questionId}"
+                    }
+                    response = Response(json.dumps([bad_object]),
+                                            status=400, mimetype='application/json')
+                    return response
         return jsonify({f'Attempt to answer Question {questionId}':
                         f'Question {questionId} does not exist.'}), 404
 
@@ -310,20 +321,24 @@ def valid_username(username):
 
 
 def valid_question(questionObject):
-    if 'topic' and 'body' in questionObject.keys():
+    if 'topic' in questionObject.keys() and 'body' in questionObject.keys():
         questionsList = conn.query_all('questions')
         input_topic = questionObject['topic']
         input_body = questionObject['body']
-        empty_field = len(input_topic.strip()) and len(input_body.strip()) == 0
-        if empty_field:
-                    value = (False, "Question topic or body should not be empty!")
+        empty_field = len(str(input_topic).strip()) and len(str(input_body).strip()) == 0
+        check_type = type(input_topic) == int or type(input_body) == int
+        print(check_type)
+        if empty_field or check_type:
+                    value = (False, {"hint_1":"Question topic or body should not be empty!",
+                                    "hint_2":"body and topic fileds should not consist entirely of integer-type data"}
+                        )
                     return value
         if questionsList:
             topics = [question[1] for question in questionsList if question[1] == input_topic]
 
             if len(topics) != 0:
                 value = (False, "Question topic already exists!")
-                return value                
+                return value             
             else:
                 if len(topics) == 0:
                     return (True, )
@@ -333,12 +348,15 @@ def valid_question(questionObject):
  
 
 def valid_answer(answerObject):
-    if 'Qn_Id' in answerObject and 'body' in answerObject:
+    if 'Qn_Id' in answerObject.keys() and 'body' in answerObject.keys():
         input_QnId = answerObject['Qn_Id']
         input_body = answerObject['body']
-        empty_field = len(input_QnId) and len(input_body.strip()) == 0
-        if empty_field:
-            return (False, "Answer body should not be empty!")
+        empty_field = len(str(input_QnId)) and len(input_body.strip()) == 0
+        check_type = type(input_QnId) == str or type(input_body) == int
+        if empty_field or check_type:
+            return (False, {'hint': "Answer body should not be empty!",
+                            'hint2': "body and topic fileds should not contain numbers only and string-type data respectively"}
+                )
         return (True, )
     else:
         return (False, )
