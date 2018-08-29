@@ -239,39 +239,26 @@ def add_answer(questionId):
 
 @app.route('/api/v1/questions/<int:questionId>', methods=['PATCH'])
 @jwt_required
-def update_question(questionId, topic, body, question_id):
+def update_question(questionId):
     current_user = get_jwt_identity()
     if current_user:
         request_data = request.get_json()
         questionsList = conn.query_all('questions')
         if questionsList:
             updated_question = dict()
-            ids = [question[3] for question in questionsList]
-
+            ids = [int(question[3]) for question in questionsList]
+            print(ids)
             if questionId in ids:
                 if "topic" in request_data:
                     updated_question["topic"] = request_data["topic"]
                 if "body" in request_data:
-                    updated_question["body"] = request_data["topic"]
+                    updated_question["body"] = request_data["body"]
                 if len(updated_question['topic'])!=0 and len(updated_question['body'])!=0:
                     for question in questionsList:
-                        if question["questionId"] == questionId:
-                            conn.update_entry(
-                                'questions',
-                                topic,
-                                updated_question['topic'],
-                                question_id,
-                                questionId
-                            )
-                            conn.update_entry(
-                                'questions',
-                                body,
-                                updated_question['body'],
-                                question_id,
-                                questionId
-                            )
-                    return jsonify({
-                        'msg': f'Question {questionId} updated successfully.'}), 204
+                        if int(question[3]) == questionId:
+                            print(type(question[1]))
+                            conn.update_question(updated_question['topic'], updated_question['body'], str(questionId))
+                            return jsonify({'msg': f'Question {questionId} updated successfully.'}), 200
                 return jsonify({
                     'msg': 'body and topic fields should not be empty'})
                 

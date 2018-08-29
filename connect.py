@@ -131,12 +131,19 @@ class DatabaseConnection(object):
         else:
             return queries
 
-    def update_entry(self, tablename, variable,
-                     new_value, identifier, id_value):
+    def update_question(self, new_topic, new_body, questionId):
         try:    
-            update_command = f"""UPDATE {tablename}
-                                SET {variable}={new_value}
-                                WHERE {identifier}={id_value}"""
+            update_command = """UPDATE questions SET topic = %s, body = %s 
+                                WHERE question_id = %s"""
+            self.cursor.execute(update_command, (new_topic, new_body, questionId))
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+
+    def update_answer(self, new_body, id_value):
+        try:    
+            update_command = f"""UPDATE answers
+                                SET body ={new_body}
+                                WHERE Qn_Id ={id_value}"""
             self.cursor.execute(update_command)
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
