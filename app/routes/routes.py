@@ -1,13 +1,13 @@
 from datetime import datetime, timedelta
 
-import bcrypt
 from flask import Flask, Response, json, jsonify, request, url_for
 from flask_jwt_extended import (JWTManager, create_access_token,
                                 get_jwt_identity, jwt_required)
 
 from werkzeug.security import check_password_hash
 from app import app
-from app.models import Answer, Question, User
+from app.models import (Answer, Question, User, valid_answer,
+                        valid_question, valid_username)
 from connect import conn
 
 
@@ -53,10 +53,11 @@ def signup():
     if not request.is_json:
         return jsonify({'message': 'JSON missing in request!'}), 400
 
-    username = str(request.args.get('username', None)).split()
-    email = request.args.get('email', None)
-    password = request.args.get('password', None)
+    username = str(request.args.get('username')).split()
+    email = request.args.get('email')
+    password = request.args.get('password')
     repeat_password = request.args.get('repeat_password', None)
+    print (username)
 
     if not username:
         return jsonify({
@@ -83,6 +84,7 @@ def signup():
                     return jsonify({'message': f'{msg}'}), 400
 
             if repeat_password == password:
+                print (username)
                 user = User(username, email, password)
                 conn.insert_new_record('users', user.__repr__())
                 return jsonify({
@@ -106,14 +108,16 @@ def get_questions():
 @app.route('/api/v1/questions/<int:questionId>', methods=['GET'])
 def get_question(questionId):
     questionsList = conn.query_all('questions')
-    
+    answersList = conn.query_all('answers')
+    answers = [[ans[2]] for ans in answersList if int(ans[1])==questionId]
     if questionsList:
         for question in questionsList:
             if int(question[3]) == questionId:
                 temp = {
                     'questionId': question[3],
                     'topic': question[1],
-                    'body': question[2]
+                    'body': question[2],
+                    'answers': answers
                 }
                 return jsonify(temp), 200
         return Response(json.dumps(['Question not Found']),
@@ -160,10 +164,8 @@ def add_question():
     current_user = get_jwt_identity()
     if current_user:
         request_data = request.get_json()
-        print(request_data)
 
         duplicate_check = valid_question(request_data)
-        print(duplicate_check)
         
         if duplicate_check[0]:
             temp = {
@@ -172,8 +174,7 @@ def add_question():
             }
 
             question = Question(temp['topic'], temp['body'])
-            id = question.id
-            temp['questionId'] = id
+            question.author = current_user
             conn.insert_new_record('questions', question.__repr__())
 
             return jsonify({
@@ -209,21 +210,20 @@ def add_answer(questionId):
         questionsList = conn.query_all('questions')
         if questionsList:
             answer_check = valid_answer(request_data)
-            ids = [int(qn[3]) for qn in questionsList]
+            ids = [int(qn[4]) for qn in questionsList]
             if answer_check[0] and request_data['Qn_Id'] in ids:
                 temp = {
                     'Qn_Id': request_data['Qn_Id'],
                     'body': request_data['body']
                 }
                 answer = Answer(temp['body'], temp['Qn_Id'])
-                id = answer.answerId
-                temp['answerId'] = id
+                answer.author = current_user
                 conn.insert_new_record('answers', answer.__repr__())
 
                 return jsonify({
                     'msg': f'Answer {id} posted successfully'
                 }), 201
-            # return jsonify({'msg': 'body and Qn_Id fields should not be empty'})
+            
             else:
 
                 if not answer_check[0] and len(answer_check) > 1:
@@ -258,32 +258,36 @@ def select_answer_as_preferred(questionId, answerId):
         questionsList = conn.query_all('questions')
 
         if questionsList:
+
             answer_check = valid_answer(request_data)
-            ids = [int(qn[3]) for qn in questionsList]
-            if answer_check[0] and request_data['Qn_Id'] in ids:
-        
-                conn.update_answer(str(answerId))
+            ids = [int(qn[4]) for qn in questionsList]
+            usr = [qn[3] for qn in questionsList if int(qn[4])==questionId]
+            if usr and usr[0] == current_user:
+                if answer_check[0] and request_data['Qn_Id'] in ids:
+            
+                    conn.update_answer(str(answerId))
 
-                return jsonify({
-                    'msg': f"Answer {answerId} marked as preferred"
-                }), 201
-            # return jsonify({'msg': 'body and Qn_Id fields should not be empty'})
-            else:
-
-                if not answer_check[0] and len(answer_check) > 1:
-                    reason = answer_check[1]
-                    return jsonify({"error": f"{reason}"})
+                    return jsonify({
+                        'msg': f"Answer {answerId} marked as preferred"
+                    }), 201
                 else:
-                    bad_object = {
-                        "error": "Invalid answer object",
-                        "hint": '''Request format should be {
-                            'body': 'this is the body',
-                                'Qn_Id': 2}''',
-                        "hint2": f"Qn_Id should correspond with {questionId}"
-                    }
-                    response = Response(json.dumps([bad_object]),
-                                            status=400, mimetype='application/json')
-                    return response
+
+                    if not answer_check[0] and len(answer_check) > 1:
+                        reason = answer_check[1]
+                        return jsonify({"error": f"{reason}"})
+                    else:
+                        bad_object = {
+                            "error": "Invalid answer object",
+                            "hint": '''Request format should be {
+                                'body': 'this is the body',
+                                    'Qn_Id': 2}''',
+                            "hint2": f"Qn_Id should correspond with {questionId}"
+                        }
+                        response = Response(json.dumps([bad_object]),
+                                                status=400, mimetype='application/json')
+                        return response
+            return jsonify({'Access denied': 
+                            f'Only question auhtor:{current_user} can perform this action!'})
         return jsonify({f'Attempt to select answer to Question {questionId} as prefered':
                         f'Question {questionId} does not exist.'}), 404
 
@@ -300,24 +304,33 @@ def update_question(questionId):
     if current_user:
         request_data = request.get_json()
         questionsList = conn.query_all('questions')
+        
         if questionsList:
-            updated_question = dict()
-            ids = [int(question[3]) for question in questionsList]
-            print(ids)
-            if questionId in ids:
-                if "topic" in request_data:
-                    updated_question["topic"] = request_data["topic"]
-                if "body" in request_data:
-                    updated_question["body"] = request_data["body"]
-                if len(updated_question['topic'])!=0 and len(updated_question['body'])!=0:
-                    for question in questionsList:
-                        if int(question[3]) == questionId:
-                            print(type(question[1]))
-                            conn.update_question(updated_question['topic'], updated_question['body'], str(questionId))
-                            return jsonify({'msg': f'Question {questionId} updated successfully.'}), 200
-                return jsonify({
-                    'msg': 'body and topic fields should not be empty'})
-                
+            usr = [qn[3] for qn in questionsList if int(qn[4])==questionId]
+            if usr and usr[0] == current_user:
+                updated_question = dict()
+                ids = [int(question[4]) for question in questionsList]
+                print(ids)
+                if questionId in ids:
+                    if "topic" in request_data:
+                        updated_question["topic"] = request_data["topic"]
+                    if "body" in request_data:
+                        updated_question["body"] = request_data["body"]
+                    condition_1 = len(updated_question['topic'])
+                    condition_2 = len(updated_question['body'])
+                    if condition_1 !=0 and condition_2 !=0:
+                        for question in questionsList:
+                            if int(question[4]) == questionId:
+                                conn.update_question(
+                                    updated_question['topic'],
+                                    updated_question['body'],
+                                    str(questionId))
+                                msg = f'Question {questionId} updated successfully.'
+                                return jsonify({'msg': msg}), 200
+                    return jsonify({
+                        'msg': 'body and topic fields should not be empty'})
+            msg = f'Only question auhtor:{current_user} can perform this action!'
+            return jsonify({'Access denied': msg})
         response = Response(json.dumps(['Question not found']), status=404)
         return response
 
@@ -334,17 +347,23 @@ def delete_question(questionId):
     if current_user:
         questionsList = conn.query_all('questions')
         if questionsList:
-            ids = [int(question[3]) for question in questionsList]
-            if questionId in ids:
-                print('yeah')
-                for question in questionsList:
-                    if questionId == int(question[3]):
-                        questionsList.remove(question)
-                        conn.delete_entry('questions', str(questionId))
-                        message = {'success': f"Question {questionId} deleted successfully!"}
-                        response = Response(
-                            json.dumps(message), status=202, mimetype='application/json')
-                        return response
+            usr = [qn[3] for qn in questionsList if int(qn[4])==questionId]
+            if usr and usr[0] == current_user:
+                ids = [int(question[4]) for question in questionsList]
+                if questionId in ids:
+
+                    for question in questionsList:
+                        if questionId == int(question[4]):
+
+                            questionsList.remove(question)
+                            conn.delete_entry('questions', str(questionId))
+
+                            message = {'success': f"Question {questionId} deleted successfully!"}
+                            response = Response(
+                                json.dumps(message), status=202, mimetype='application/json')
+                            return response
+            msg = f'Only question auhtor:{current_user} can perform this action!'
+            return jsonify({'Access denied': msg})
         response = Response(json.dumps(['Question not found']),
                             status=404, mimetype='application/json')
         return response
@@ -354,60 +373,6 @@ def delete_question(questionId):
     }), 401
 
 
-def valid_username(username):
-    users = conn.query_all('users')
-    if len(users) != 0:
-        for user in users:
-            existing_user = [user[1]
-                             for user in users if user[1] == username]
-            if not existing_user:
-                return True
-    elif len(users) == 0:
-        return True
-    return False
-
-
-def valid_question(questionObject):
-    if 'topic' in questionObject.keys() and 'body' in questionObject.keys():
-        questionsList = conn.query_all('questions')
-        input_topic = questionObject['topic']
-        input_body = questionObject['body']
-        empty_field = len(str(input_topic).strip()) and len(str(input_body).strip()) == 0
-        check_type = type(input_topic) == int or type(input_body) == int
-        print(check_type)
-        if empty_field or check_type:
-                    value = (False, {"hint_1":"Question topic or body should not be empty!",
-                                    "hint_2":"body and topic fileds should not consist entirely of integer-type data"}
-                        )
-                    return value
-        if questionsList:
-            topics = [question[1] for question in questionsList if question[1] == input_topic]
-
-            if len(topics) != 0:
-                value = (False, "Question topic already exists!")
-                return value             
-            else:
-                if len(topics) == 0:
-                    return (True, )
-    else:
-        if 'topic' or 'body' not in questionObject.keys():
-            return (False, )
- 
-
-def valid_answer(answerObject):
-    if 'Qn_Id' in answerObject.keys() and 'body' in answerObject.keys():
-        input_QnId = answerObject['Qn_Id']
-        input_body = answerObject['body']
-        empty_field = len(str(input_QnId)) and len(input_body.strip()) == 0
-        check_type = type(input_QnId) == str or type(input_body) == int
-        if empty_field or check_type:
-            return (False, {'hint': "Answer body should not be empty!",
-                            'hint2': "body and topic fileds should not contain numbers only and string-type data respectively"}
-                )
-        return (True, )
-    else:
-        return (False, )
-
 @app.errorhandler(500)
 def internal_sserver_error(e):
     msg = "Sorry,we are experiencing some technical difficulties"
@@ -416,15 +381,18 @@ def internal_sserver_error(e):
 
 @app.errorhandler(404)
 def url_unknown(e):
-    return jsonify({"error": "Sorry, resource you are looking for does not exist"}), 404
+    msg = "Sorry, resource you are looking for does not exist"
+    return jsonify({"error": msg}), 404
 
 @app.errorhandler(405)
 def method_not_allowed(e):
-    return jsonify({'error': "Sorry, this action is not supported for this url"}), 405
+    msg = "Sorry, this action is not supported for this url"
+    return jsonify({'error': msg}), 405
 
 @app.errorhandler(403)
 def forbidden_resource(e):
-    return jsonify({'error': "Sorry, resource you are trying to access is forbidden"}), 403
+    msg = "Sorry, resource you are trying to access is forbidden"
+    return jsonify({'error': msg}), 403
 
 @app.errorhandler(410)
 def deleted_resource(e):

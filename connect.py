@@ -35,6 +35,7 @@ class DatabaseConnection(object):
                 id serial PRIMARY KEY,
                 topic varchar(100) NOT NULL,
                 body varchar(600) NOT NULL,
+                author varchar(100) NOT NULL,
                 question_id varchar(150) NOT NULL
             );"""
             self.cursor.execute(create_table_command)
@@ -49,6 +50,7 @@ class DatabaseConnection(object):
                 Qn_Id varchar(150) NOT NULL,
                 body varchar(600) NOT NULL,
                 answer_id varchar(150) NOT NULL,
+                author varchar(100) NOT NULL,
                 prefered boolean
             );"""
             self.cursor.execute(create_table_command)
@@ -80,8 +82,10 @@ class DatabaseConnection(object):
                 insert_command = """INSERT INTO questions(
                     topic,
                     body,
+                    author,
                     question_id
                 ) VALUES(
+                    %s,
                     %s,
                     %s,
                     %s
@@ -89,6 +93,7 @@ class DatabaseConnection(object):
                 self.cursor.execute(insert_command, (
                     data['topic'],
                     data['body'],
+                    data['author'],
                     data['questionId'])
                 )
             elif tablename == tables[2]:
@@ -96,6 +101,7 @@ class DatabaseConnection(object):
                     Qn_Id,
                     body,
                     answer_id,
+                    author,
                     prefered
                 ) VALUES(
                     %s,
@@ -106,6 +112,7 @@ class DatabaseConnection(object):
                 self.cursor.execute(insert_command, (
                     data['Qn_Id'],
                     data['body'],
+                    data['author'],
                     data['answerId'],
                     data['prefered'])
                 )
@@ -176,9 +183,10 @@ class DatabaseConnection(object):
             print(error)
 
 
-
 conn = DatabaseConnection()
 #conn.drop_table('answers')
 conn.create_Answers_table()
+#conn.drop_table('users')
 conn.create_Users_table()
+#conn.drop_table('questions')
 conn.create_Questions_table()
