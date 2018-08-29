@@ -63,6 +63,7 @@ def signup():
             'message': 'Required parameter: username missing!'
         }), 400
     else:
+
         if username:
             if len(username) > 1:
                 username_ = username[0] + " " + username[1]
