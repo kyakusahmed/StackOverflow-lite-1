@@ -95,6 +95,7 @@ def signup():
 
                     user = User(username, email, password)
                     conn.insert_new_record('users', user.__repr__())
+                
                     return jsonify({
                         'success': f"{username}'s account created successfully"
                     }), 200
