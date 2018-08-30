@@ -1,16 +1,19 @@
 language: python
 python:
-  - "3.6"
+    - "3.6"
+
+services:
+    - postgresql
 
 install:
-  - pip install -r requirements.txt
+    - pip install -r requirements.txt
 
 before_script:
-  - psql -c 'create database travis_ci_test;' -U postgres
+    - "psql -c 'create database stackoverflow;' -U postgres"
+
 
 script:
-  - pytest
-  
-after_success:
-  - coveralls
+    - pytest --cov=api --cov-report term-missing
 
+after_success:
+    - coveralls
