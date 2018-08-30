@@ -16,7 +16,7 @@ class DatabaseConnection(object):
     def create_Users_table(self):
         try:
             self.tablename = 'users'
-            create_table_command = """CREATE TABLE users(
+            create_table_command = """CREATE TABLE IF NOT EXISTS users(
                 id serial PRIMARY KEY,
                 username varchar(100) NOT NULL,
                 email varchar(100) NOT NULL,
@@ -30,7 +30,7 @@ class DatabaseConnection(object):
     def create_Questions_table(self):
         try:
             self.tablename = 'questions'
-            create_table_command = """CREATE TABLE questions(
+            create_table_command = """CREATE TABLE IF NOT EXISTS questions(
                 id serial PRIMARY KEY,
                 topic varchar(100) NOT NULL,
                 body varchar(600) NOT NULL,
@@ -43,7 +43,7 @@ class DatabaseConnection(object):
     def create_Answers_table(self):
         try:
             self.tablename = 'answers'
-            create_table_command = """CREATE TABLE answers(
+            create_table_command = """CREATE TABLE IF NOT EXISTS answers(
                 id serial PRIMARY KEY,
                 Qn_Id uuid UNIQUE,
                 body varchar(600) NOT NULL,
@@ -160,9 +160,9 @@ class DatabaseConnection(object):
             print(error)
 
 conn = DatabaseConnection()
-#conn.create_Answers_table()
-#conn.create_Users_table()
-#conn.create_Questions_table()
+conn.create_Answers_table()
+conn.create_Users_table()
+conn.create_Questions_table()
 
 # if not conn.tablename == 'users':
 #     conn.create_Users_table()
