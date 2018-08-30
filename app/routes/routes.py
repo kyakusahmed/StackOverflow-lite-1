@@ -114,8 +114,17 @@ def signup():
 @app.route('/api/v1/questions', methods=['GET'])
 def get_questions():
     questionsList = conn.query_all('questions')
+    questions = []
     if questionsList:
-        return jsonify({'questions': questionsList}), 200
+        for qn in questionsList:
+            temp = {
+                'questionId': qn[4],
+                'author': qn[3],
+                'topic': qn[1],
+                'body': qn[2]
+            }
+            questions.append(temp)
+        return jsonify({'questions': questions}), 200
     return jsonify({'message': 'No Questions added yet'}), 404
 
 
@@ -143,10 +152,19 @@ def get_question(questionId):
 @app.route('/api/v1/questions/<int:questionId>/answers', methods=['GET'])
 def get_answers(questionId):
     answersList = conn.query_all('answers')
+    answers = []
     if answersList:
         for answer in answersList:
             if int(answer[1]) == questionId:
-                return jsonify({'answers': answersList}), 200
+                temp = {
+                    'answerId': answer[3],
+                    'author': answer[4],
+                    'body': answer[2],
+                    'prefered': answer[5],
+                    'questionId': answer[1]
+                }
+                answers.append(temp)
+                return jsonify({'answers': answers}), 200
     return jsonify({'message': f'No Answers added yet for question {questionId}'}), 404
 
 
@@ -158,13 +176,15 @@ def get_answer(questionId, answerId):
     if questionsList:
         if answersList:
             for answer in answersList:
+                print(answer)
                 if int(answer[3]) == answerId:
+                    print(answer)
                     temp = {
                         'answerId': answer[3],
-                        'Qn_Id': answer[1],
-                        'body': answer[2],
                         'author': answer[4],
-                        'prefered': answer[5]
+                        'body': answer[2],
+                        'prefered': answer[5],
+                        'QuestionId': answer[1]
                     }
                     return jsonify(temp), 200
             return Response(json.dumps(['Answer not Found']),
@@ -195,7 +215,7 @@ def add_question():
             conn.insert_new_record('questions', question.__repr__())
 
             return jsonify({
-                'msg': f'Question {id} posted successfully',
+                'msg': f'Question {question.id} posted successfully',
                 'Posted by': f'{current_user}'
             }), 201
 
@@ -228,9 +248,9 @@ def add_answer(questionId):
         if questionsList:
             answer_check = valid_answer(request_data)
             ids = [int(qn[4]) for qn in questionsList]
-            if answer_check[0] and request_data['Qn_Id'] in ids:
+            if answer_check[0]:
                 temp = {
-                    'Qn_Id': request_data['Qn_Id'],
+                    'Qn_Id': questionId,
                     'body': request_data['body']
                 }
                 answer = Answer(temp['body'], temp['Qn_Id'])
@@ -238,7 +258,7 @@ def add_answer(questionId):
                 conn.insert_new_record('answers', answer.__repr__())
 
                 return jsonify({
-                    'msg': f'Answer {id} posted successfully'
+                    'msg': f'Answer {answer.answerId} posted successfully'
                 }), 201
 
             else:
@@ -251,8 +271,7 @@ def add_answer(questionId):
                         "error": "Invalid answer object",
                         "hint": '''Request format should be {
                             'body': 'this is the body',
-                                'Qn_Id': 2}''',
-                        "hint2": f"Qn_Id should correspond with {questionId}"
+                                'Qn_Id': 2}'''
                     }
                     response = Response(json.dumps([bad_object]),
                                         status=400, mimetype='application/json')
@@ -277,10 +296,10 @@ def select_answer_as_preferred(questionId, answerId):
         if questionsList:
 
             answer_check = valid_answer(request_data)
-            ids = [int(qn[4]) for qn in questionsList]
             usr = [qn[3] for qn in questionsList if int(qn[4]) == questionId]
+            print (current_user, usr)
             if usr and usr[0] == current_user:
-                if answer_check[0] and request_data['Qn_Id'] in ids:
+                if answer_check[0]:
 
                     conn.update_answer(str(answerId))
 
@@ -297,8 +316,7 @@ def select_answer_as_preferred(questionId, answerId):
                             "error": "Invalid answer object",
                             "hint": '''Request format should be {
                                 'body': 'this is the body',
-                                    'Qn_Id': 2}''',
-                            "hint2": f"Qn_Id should correspond with {questionId}"
+                                    'Qn_Id': 2}'''
                         }
                         response = Response(json.dumps([bad_object]),
                                             status=400, mimetype='application/json')

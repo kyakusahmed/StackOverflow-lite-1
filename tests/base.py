@@ -13,6 +13,7 @@ from app.connect import DatabaseConnection, DSN_TESTING
 class APITestCase(TestCase):
     def create_app(self):
         app.config['DEBUG'] = True
+        app.config[]
         return app
 
     def setUp(self):

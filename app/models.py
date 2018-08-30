@@ -96,11 +96,10 @@ def valid_question(questionObject):
  
 
 def valid_answer(answerObject):
-    if 'Qn_Id' in answerObject.keys() and 'body' in answerObject.keys():
-        input_QnId = answerObject['Qn_Id']
+    if 'body' in answerObject.keys():
         input_body = answerObject['body']
-        empty_field = len(str(input_QnId)) and len(input_body.strip()) == 0
-        check_type = type(input_QnId) == str or type(input_body) == int
+        empty_field = len(input_body.strip()) == 0
+        check_type = type(input_body) == int
         if empty_field or check_type:
             return (False, {'hint_1': "Answer body should not be empty!",
                             'hint_2': """body and Qn_Id fileds should not contain

@@ -113,8 +113,8 @@ class DatabaseConnection(object):
                 self.cursor.execute(insert_command, (
                     data['Qn_Id'],
                     data['body'],
-                    data['author'],
                     data['answerId'],
+                    data['author'],
                     data['prefered'])
                 )
             else:
