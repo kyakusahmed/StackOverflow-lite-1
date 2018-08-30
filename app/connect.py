@@ -1,13 +1,21 @@
+import os
+
 import psycopg2
 
-DSN_APP = "dbname='clvx' user='postgres' host='localhost' password='Tesxting' port='5432'"
-DSN_TESTING = "dbname='test_db' user='postgres' host='localhost' password='Tesxting' port='5432'"
+# DSN_APP = "dbname='clvx' user='postgres' host='localhost' password='Tesxting' port='5432'"
+# DSN_TESTING = "dbname='test_db' user='postgres' host='localhost' password='Tesxting' port='5432'"
 
 
 class DatabaseConnection(object):
-    def __init__(self, DSN=DSN_APP):
+    def __init__(self):
+        if os.getenv('APP_SETTING') == "testing":
+            self.dbname = "test_db"
+
+        else:
+            self.dbname = "clvx"
+
         try:
-            self.connection = psycopg2.connect(DSN)
+            self.connection = psycopg2.connect(f"dbname={self.dbname} user='postgres' host='localhost' password='Tesxting' port='5432'")
             self.connection.autocommit = True
             self.cursor = self.connection.cursor()
             self.last_ten_queries = []

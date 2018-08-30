@@ -96,7 +96,7 @@ def signup():
                     user = User(username, email, password)
                     conn.insert_new_record('users', user.__repr__())
                     return jsonify({
-                        'success': f"{username}'s account created succesfully"
+                        'success': f"{username}'s account created successfully"
                     }), 200
                 else:
                     if repeat_password != password:
@@ -176,9 +176,9 @@ def get_answer(questionId, answerId):
     if questionsList:
         if answersList:
             for answer in answersList:
-                print(answer)
+                
                 if int(answer[3]) == answerId:
-                    print(answer)
+                
                     temp = {
                         'answerId': answer[3],
                         'author': answer[4],
@@ -297,7 +297,7 @@ def select_answer_as_preferred(questionId, answerId):
 
             answer_check = valid_answer(request_data)
             usr = [qn[3] for qn in questionsList if int(qn[4]) == questionId]
-            print (current_user, usr)
+            
             if usr and usr[0] == current_user:
                 if answer_check[0]:
 

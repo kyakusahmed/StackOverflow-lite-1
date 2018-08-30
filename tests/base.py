@@ -7,18 +7,18 @@ from app import app
 from app.models import Answer, Question
 from app.routes import routes
 from config import Config
-from app.connect import DatabaseConnection, DSN_TESTING
+from app.connect import DatabaseConnection
 
 
 class APITestCase(TestCase):
+    
     def create_app(self):
         app.config['DEBUG'] = True
-        app.config[]
         return app
 
     def setUp(self):
         self.app = app.test_client()
-        self.conn = DatabaseConnection(DSN=DSN_TESTING)
+        self.conn = DatabaseConnection()
         self.conn.create_Answers_table()
         self.conn.create_Questions_table()
         self.conn.create_Users_table()

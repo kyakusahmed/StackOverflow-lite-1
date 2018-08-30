@@ -1,4 +1,8 @@
+from datetime import timedelta
+
 from flask import json, url_for
+from flask_jwt_extended import (create_access_token, get_jwt_identity,
+                                jwt_required)
 from tests import app
 
 from .base import APITestCase, questionsList
@@ -10,27 +14,68 @@ class TestRoutes(APITestCase):
         res = self.client.get('/')
         self.assertEqual(res.status_code, 200)
 
+    def test_user_can_signup(self):
+        self.data = {
+            "username": "Kakai",
+            "email": "cedriclusiba@gmail.com",
+            "password": "jjq123",
+            "repeat_password": "jjq123"
+        }
+        res = self.client.post(
+            '/api/v1/auth/signup', content_type="application/json", data=json.dumps(self.data))
+        msg = {'success': "Kakai's account created successfully"}
+        self.assertEqual(res.json, msg)
+        self.assertEqual(res.status_code, 200)
+
     def test_user_can_login(self):
         self.data = {
             "username": "Kakai",
+            "email": "cedriclusiba@gmail.com",
+            "password": "jjq123",
+            "repeat_password": "jjq123"
+        }
+        res = self.client.post(
+            '/api/v1/auth/signup', content_type="application/json", data=json.dumps(self.data))
+
+        self.data2 = {
+            "username": "Kakai",
             "password": "jjq123"
         }
-        res = self.client.post(url_for('login'), data)
-
-        self.assertEqual(res.status_code, 200) 
+        res2 = self.client.post(
+            "/api/v1/auth/login", content_type="application/json", data=json.dumps(self.data2))
+        
+        self.assertEqual(res2.status_code, 200)
 
     def test_user_can_get_questions(self):
         with self.client:
-            res = self.client.get('/api/v1/questions')
-            self.assertEqual(res.status_code, 200)
+            questionsList = self.conn.query_all('questions')
+            if questionsList:
+                res = self.client.get('/api/v1/questions')
+                self.assertEqual(res.status_code, 200)
+
+            else:
+                res = self.client.get('/api/v1/questions')
+                self.assertEqual(res.status_code, 404)
+                self.assertEqual(res.json, {'message': 'No Questions added yet'})
 
     def test_user_can_get_question(self):
-        res = self.client.get('/api/v1/questions/2')
-        self.assertEqual(res.status_code, 404)
+        questionsList = self.conn.query_all('questions')
+        if questionsList and [qn for qn in questionsList if qn[4]==2]:
+            res = self.client.get('/api/v1/questions/2')
+            self.assertEqual(res.status_code, 200)
+        else:
+            res = self.client.get('/api/v1/questions/2')
+            self.assertEqual(res.status_code, 200)
+            self.assertEqual(res.json, {'Question 2': 'does not exist.'})
 
     def test_user_can_get_answers(self):
-        res = self.client.get('/api/v1/questions/2/answers')
-        self.assertEqual(res.status_code, 200)
+        answersList = self.conn.query_all('answers')
+        if answersList:
+            res = self.client.get('/api/v1/questions/2/answers')
+            self.assertEqual(res.status_code, 200)
+        else:
+            res = self.client.get('/api/v1/questions/2/answers')
+            self.assertEqual(res.status_code, 404)
 
     def test_user_can_get_answer(self):
         res = self.client.get('/api/v1/questions/2/answers/3')
