@@ -60,7 +60,7 @@ def signup():
     request_data = request.get_json()
     if not request_data:
         return jsonify({'message': 'JSON missing in request!'}), 400
-    
+
     if valid_signup_data(request_data):
         username = str(request_data['username']).split()
         email = request_data['email']
@@ -92,7 +92,7 @@ def signup():
                         return jsonify({'message': f'{msg}'}), 400
 
                 if repeat_password == password:
-                    
+
                     user = User(username, email, password)
                     conn.insert_new_record('users', user.__repr__())
                     return jsonify({
