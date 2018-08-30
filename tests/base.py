@@ -7,7 +7,7 @@ from app import app
 from app.models import Answer, Question
 from app.routes import routes
 from config import Config
-from connect import DatabaseConnection
+from app.connect import DatabaseConnection, DSN_TESTING
 
 
 class APITestCase(TestCase):
@@ -17,12 +17,22 @@ class APITestCase(TestCase):
 
     def setUp(self):
         self.app = app.test_client()
-        
-    def tearDown(self):
-        pass
+        self.conn = DatabaseConnection(DSN=DSN_TESTING)
+        self.conn.create_Answers_table()
+        self.conn.create_Questions_table()
+        self.conn.create_Users_table()
+        self.data = {
+            "username": "Kakai",
+            "email": "dhhj@gmail.com",
+            "password": "jjq123",
+            "repeat_password": "jjq123"
+        }
+        self.conn.insert_new_record('users', self.data)
 
-    def post_question(self):
-        pass
+    def tearDown(self):
+        self.conn.drop_table('users')
+        self.conn.drop_table('questions')
+        self.conn.drop_table('answers')
 
 
 def createQnsList():

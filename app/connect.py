@@ -5,9 +5,9 @@ DSN_TESTING = "dbname='test_db' user='postgres' host='localhost' password='Tesxt
 
 
 class DatabaseConnection(object):
-    def __init__(self):
+    def __init__(self, DSN=DSN_APP):
         try:
-            self.connection = psycopg2.connect(DSN_APP)
+            self.connection = psycopg2.connect(DSN)
             self.connection.autocommit = True
             self.cursor = self.connection.cursor()
             self.last_ten_queries = []
@@ -104,6 +104,7 @@ class DatabaseConnection(object):
                     author,
                     prefered
                 ) VALUES(
+                    %s,
                     %s,
                     %s,
                     %s,

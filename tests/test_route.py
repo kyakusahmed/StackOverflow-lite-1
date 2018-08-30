@@ -11,8 +11,13 @@ class TestRoutes(APITestCase):
         self.assertEqual(res.status_code, 200)
 
     def test_user_can_login(self):
-        res = self.client.post(url_for('login'))
-        self.assertEqual(res.status_code, 400) 
+        self.data = {
+            "username": "Kakai",
+            "password": "jjq123"
+        }
+        res = self.client.post(url_for('login'), data)
+
+        self.assertEqual(res.status_code, 200) 
 
     def test_user_can_get_questions(self):
         with self.client:

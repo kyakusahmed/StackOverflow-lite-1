@@ -6,9 +6,9 @@ from flask_jwt_extended import (JWTManager, create_access_token,
 
 from werkzeug.security import check_password_hash
 from app import app
-from app.models import (Answer, Question, User, valid_answer,
-                        valid_question, valid_username)
-from connect import conn
+from app.models import (Answer, Question, User, valid_answer, valid_login_data,
+                        valid_question, valid_username, valid_signup_data)
+from app.connect import conn
 
 
 @app.route('/')
@@ -19,82 +19,96 @@ def show_api_works():
 @app.route('/api/v1/auth/login', methods=['POST'])
 def login():
 
-    if not request.is_json:
+    request_data = request.get_json()
+    if not request_data:
         return jsonify({'message': 'JSON missing in request!'}), 400
 
-    username = request.args.get('username', None)
-    password = request.args.get('password', None)
+    if valid_login_data(request_data):
+        username = request_data['username']
+        password = request_data['password']
 
-    if not username:
-        return jsonify({
-            'message': 'Required parameter: username missing!'
-        }), 400
-    elif not password:
-        return jsonify({
-            'message': 'Required parameter: password missing!'
-        }), 400
+        if not username:
+            return jsonify({
+                'message': 'Required parameter: username missing!'
+            }), 400
+        elif not password:
+            return jsonify({
+                'message': 'Required parameter: password missing!'
+            }), 400
 
-    users = conn.query_all('users')
-    user = [user for user in users if check_password_hash(user[3], password) and user[1] == username]
-    if not user:
-        return jsonify({'message': 'Invalid username or password'}), 401
+        users = conn.query_all('users')
+        user = [user for user in users if check_password_hash(
+            user[3], str(password)) and user[1] == username]
+        if not user:
+            return jsonify({'message': 'Invalid username or password'}), 401
 
-    access_token = create_access_token(
-        identity=username,
-        fresh=timedelta(minutes=60)
-    )
-    msg = {'access_token': f'{access_token}'}
+        access_token = create_access_token(
+            identity=username,
+            fresh=timedelta(minutes=60)
+        )
+        msg = {'access_token': f'{access_token}'}
 
-    return jsonify({f'access token created for user {username}': msg}), 200
+        return jsonify({f'access token created for user {username}': msg}), 200
+    msg = {"error": "Invalid login data",
+           "Hint": """required formart is: {'username':'xyz',
+                    'password': 'xyh12',}"""}
+    return jsonify(msg)
 
 
 @app.route('/api/v1/auth/signup', methods=['POST'])
 def signup():
-    if not request.is_json:
+    request_data = request.get_json()
+    if not request_data:
         return jsonify({'message': 'JSON missing in request!'}), 400
+    
+    if valid_signup_data(request_data):
+        username = str(request_data['username']).split()
+        email = request_data['email']
+        password = request_data['password']
+        repeat_password = request_data['repeat_password']
 
-    username = str(request.args.get('username')).split()
-    email = request.args.get('email')
-    password = request.args.get('password')
-    repeat_password = request.args.get('repeat_password', None)
-    print (username)
+        if not username:
+            return jsonify({
+                'message': 'Required parameter: username missing!'
+            }), 400
+        else:
+            if username:
+                if len(username) > 1:
+                    username_ = username[0] + " " + username[1]
+                    username = username_
+                    if not valid_username(username):
+                        return jsonify({'message': f'username {username} already taken!'}), 401
+                elif len(username) == 1:
+                    username = username[0]
+                    if not valid_username(username):
+                        return jsonify({'message': f'username {username} already taken!'}), 401
+                if not email:
+                    return jsonify({'message': 'Required parameter: email missing!'}), 400
+                elif not password:
+                    return jsonify({'message': 'Required parameter: password missing!'}), 400
+                else:
+                    if not repeat_password:
+                        msg = 'Required parameter: repeat_password missing!'
+                        return jsonify({'message': f'{msg}'}), 400
 
-    if not username:
-        return jsonify({
-            'message': 'Required parameter: username missing!'
-        }), 400
-    else:
-        if username:
-            if len(username) > 1:
-                username_ = username[0] + " " + username[1]
-                username = username_
-                if not valid_username(username):
-                    return jsonify({'message': f'username {username} already taken!'}), 401
-            elif len(username) == 1:
-                username = username[0]
-                if not valid_username(username):
-                    return jsonify({'message': f'username {username} already taken!'}), 401
-            if not email:
-                return jsonify({'message': 'Required parameter: email missing!'}), 400
-            elif not password:
-                return jsonify({'message': 'Required parameter: password missing!'}), 400
-            else:
-                if not repeat_password:
-                    msg = 'Required parameter: repeat_password missing!'
-                    return jsonify({'message': f'{msg}'}), 400
-
-            if repeat_password == password:
-                print (username)
-                user = User(username, email, password)
-                conn.insert_new_record('users', user.__repr__())
-                return jsonify({
-                    'success': f"{username}'s account created succesfully"
-                }), 200
-            else:
-                if repeat_password != password:
+                if repeat_password == password:
+                    
+                    user = User(username, email, password)
+                    conn.insert_new_record('users', user.__repr__())
                     return jsonify({
-                        'message': 'Password does not match repeat_password'
-                    }), 401
+                        'success': f"{username}'s account created succesfully"
+                    }), 200
+                else:
+                    if repeat_password != password:
+                        return jsonify({
+                            'message': 'Password does not match repeat_password'
+                        }), 401
+    msg = {"error": "Invalid signup data",
+           "Hint": """required formart is: {'username':'xyz',
+                    'email':'xyz@gmail.com',
+                    'password': 'xyh12',
+                    'repeat_password':'xyh12'}"""}
+    return jsonify(msg)
 
 
 @app.route('/api/v1/questions', methods=['GET'])
@@ -109,14 +123,15 @@ def get_questions():
 def get_question(questionId):
     questionsList = conn.query_all('questions')
     answersList = conn.query_all('answers')
-    answers = [[ans[2]] for ans in answersList if int(ans[1])==questionId]
+    answers = [[ans[2]] for ans in answersList if int(ans[1]) == questionId]
     if questionsList:
         for question in questionsList:
-            if int(question[3]) == questionId:
+            if int(question[4]) == questionId:
                 temp = {
-                    'questionId': question[3],
+                    'questionId': question[4],
                     'topic': question[1],
                     'body': question[2],
+                    'author': question[3],
                     'answers': answers
                 }
                 return jsonify(temp), 200
@@ -147,7 +162,9 @@ def get_answer(questionId, answerId):
                     temp = {
                         'answerId': answer[3],
                         'Qn_Id': answer[1],
-                        'body': answer[2]
+                        'body': answer[2],
+                        'author': answer[4],
+                        'prefered': answer[5]
                     }
                     return jsonify(temp), 200
             return Response(json.dumps(['Answer not Found']),
@@ -166,7 +183,7 @@ def add_question():
         request_data = request.get_json()
 
         duplicate_check = valid_question(request_data)
-        
+
         if duplicate_check[0]:
             temp = {
                 'topic': request_data['topic'],
@@ -223,7 +240,7 @@ def add_answer(questionId):
                 return jsonify({
                     'msg': f'Answer {id} posted successfully'
                 }), 201
-            
+
             else:
 
                 if not answer_check[0] and len(answer_check) > 1:
@@ -238,7 +255,7 @@ def add_answer(questionId):
                         "hint2": f"Qn_Id should correspond with {questionId}"
                     }
                     response = Response(json.dumps([bad_object]),
-                                            status=400, mimetype='application/json')
+                                        status=400, mimetype='application/json')
                     return response
         return jsonify({f'Attempt to answer Question {questionId}':
                         f'Question {questionId} does not exist.'}), 404
@@ -261,10 +278,10 @@ def select_answer_as_preferred(questionId, answerId):
 
             answer_check = valid_answer(request_data)
             ids = [int(qn[4]) for qn in questionsList]
-            usr = [qn[3] for qn in questionsList if int(qn[4])==questionId]
+            usr = [qn[3] for qn in questionsList if int(qn[4]) == questionId]
             if usr and usr[0] == current_user:
                 if answer_check[0] and request_data['Qn_Id'] in ids:
-            
+
                     conn.update_answer(str(answerId))
 
                     return jsonify({
@@ -284,9 +301,9 @@ def select_answer_as_preferred(questionId, answerId):
                             "hint2": f"Qn_Id should correspond with {questionId}"
                         }
                         response = Response(json.dumps([bad_object]),
-                                                status=400, mimetype='application/json')
+                                            status=400, mimetype='application/json')
                         return response
-            return jsonify({'Access denied': 
+            return jsonify({'Access denied':
                             f'Only question auhtor:{current_user} can perform this action!'})
         return jsonify({f'Attempt to select answer to Question {questionId} as prefered':
                         f'Question {questionId} does not exist.'}), 404
@@ -304,13 +321,13 @@ def update_question(questionId):
     if current_user:
         request_data = request.get_json()
         questionsList = conn.query_all('questions')
-        
+
         if questionsList:
-            usr = [qn[3] for qn in questionsList if int(qn[4])==questionId]
+            usr = [qn[3] for qn in questionsList if int(qn[4]) == questionId]
             if usr and usr[0] == current_user:
                 updated_question = dict()
                 ids = [int(question[4]) for question in questionsList]
-                print(ids)
+
                 if questionId in ids:
                     if "topic" in request_data:
                         updated_question["topic"] = request_data["topic"]
@@ -318,7 +335,7 @@ def update_question(questionId):
                         updated_question["body"] = request_data["body"]
                     condition_1 = len(updated_question['topic'])
                     condition_2 = len(updated_question['body'])
-                    if condition_1 !=0 and condition_2 !=0:
+                    if condition_1 != 0 and condition_2 != 0:
                         for question in questionsList:
                             if int(question[4]) == questionId:
                                 conn.update_question(
@@ -347,7 +364,7 @@ def delete_question(questionId):
     if current_user:
         questionsList = conn.query_all('questions')
         if questionsList:
-            usr = [qn[3] for qn in questionsList if int(qn[4])==questionId]
+            usr = [qn[3] for qn in questionsList if int(qn[4]) == questionId]
             if usr and usr[0] == current_user:
                 ids = [int(question[4]) for question in questionsList]
                 if questionId in ids:
@@ -358,7 +375,8 @@ def delete_question(questionId):
                             questionsList.remove(question)
                             conn.delete_entry('questions', str(questionId))
 
-                            message = {'success': f"Question {questionId} deleted successfully!"}
+                            message = {
+                                'success': f"Question {questionId} deleted successfully!"}
                             response = Response(
                                 json.dumps(message), status=202, mimetype='application/json')
                             return response
@@ -379,20 +397,24 @@ def internal_sserver_error(e):
     msg2 = "Please report this to cedriclusiba@gmail.com and check back with us soon"
     return jsonify({'error': msg, "hint": msg2}), 500
 
+
 @app.errorhandler(404)
 def url_unknown(e):
     msg = "Sorry, resource you are looking for does not exist"
     return jsonify({"error": msg}), 404
+
 
 @app.errorhandler(405)
 def method_not_allowed(e):
     msg = "Sorry, this action is not supported for this url"
     return jsonify({'error': msg}), 405
 
+
 @app.errorhandler(403)
 def forbidden_resource(e):
     msg = "Sorry, resource you are trying to access is forbidden"
     return jsonify({'error': msg}), 403
+
 
 @app.errorhandler(410)
 def deleted_resource(e):

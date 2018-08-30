@@ -2,7 +2,7 @@ import uuid
 
 from werkzeug.security import generate_password_hash
 
-from connect import conn
+from app.connect import conn
 
 
 class Question:
@@ -44,7 +44,7 @@ class User:
         self.id = uuid.uuid4().int
         self.username = str(username).strip()
         self.email = str(email).strip()
-        self.password_hash = generate_password_hash(password)
+        self.password_hash = generate_password_hash(str(password))
     
     def __repr__(self):
         return {
@@ -109,3 +109,22 @@ def valid_answer(answerObject):
         return (True, )
     else:
         return (False, )
+
+
+def valid_signup_data(request_data):
+    keys = request_data.keys()
+    condition_1 = 'username' in keys and 'email' in keys
+    condition_2 = 'password' in keys and 'repeat_password' in keys
+    if condition_1 and condition_2:
+        return True
+    else:
+        return False
+
+
+def valid_login_data(request_data):
+    keys = request_data.keys()
+    condition_1 = 'username' in keys and 'password' in keys
+    if condition_1:
+        return True
+    else:
+        return False
