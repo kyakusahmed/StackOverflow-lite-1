@@ -63,6 +63,23 @@ def signup():
             'message': 'Required parameter: username missing!'
         }), 400
     else:
+        if not repeat_password:
+            msg = 'Required parameter: repeat_password missing!'
+            return jsonify({'message': f'{msg}'}), 400
+    
+    if len(username) > 1:
+        username_ = username[0] + " " + username[1]
+        print(username_)
+    username = username[0]
+    if valid_username(username):
+
+        if repeat_password == password:
+            user = User(username, email, password)
+            conn.insert_new_record('users', user.__repr__())
+            return jsonify({
+                'success': f"{username}'s account created succesfully"
+            }), 200
+
 
         if username:
             if len(username) > 1:
