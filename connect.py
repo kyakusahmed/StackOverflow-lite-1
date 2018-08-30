@@ -5,11 +5,10 @@ class DatabaseConnection(object):
     def __init__(self):
         try:
             self.connection = psycopg2.connect(
-                "dbname='clvx' user='postgres' host='localhost' password='Tesxting' port='5432'"
-            )
+                "dbname='clvx' user='postgres' host='localhost' password='Tesxting' port='5432'")
             self.connection.autocommit = True
             self.cursor = self.connection.cursor()
-            self.queries = []
+            self.last_ten_queries = []
         except:
             print("Cannot connect to database.")   
 
@@ -22,7 +21,7 @@ class DatabaseConnection(object):
                 email varchar(100) NOT NULL,
                 password_hash varchar(200) NOT NULL,
                 user_id varchar(150) NOT NULL
-            )"""
+            );"""
             self.cursor.execute(create_table_command)
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
@@ -34,8 +33,8 @@ class DatabaseConnection(object):
                 id serial PRIMARY KEY,
                 topic varchar(100) NOT NULL,
                 body varchar(600) NOT NULL,
-                question_id uuid UNIQUE
-            )"""
+                question_id varchar(150) NOT NULL
+            );"""
             self.cursor.execute(create_table_command)
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
@@ -45,12 +44,11 @@ class DatabaseConnection(object):
             self.tablename = 'answers'
             create_table_command = """CREATE TABLE IF NOT EXISTS answers(
                 id serial PRIMARY KEY,
-                Qn_Id uuid UNIQUE,
+                Qn_Id varchar(150) NOT NULL,
                 body varchar(600) NOT NULL,
                 answer_id varchar(150) NOT NULL,
-                prefered boolean,
-                FOREIGN KEY (Qn_Id) REFERENCES questions(question_id)
-            )"""
+                prefered boolean
+            );"""
             self.cursor.execute(create_table_command)
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
@@ -69,7 +67,7 @@ class DatabaseConnection(object):
                     %s,
                     %s,
                     %s
-                )"""
+                );"""
                 self.cursor.execute(insert_command, (
                     data['username'],
                     data['email'],
@@ -85,7 +83,7 @@ class DatabaseConnection(object):
                     %s,
                     %s,
                     %s
-                )"""
+                );"""
                 self.cursor.execute(insert_command, (
                     data['topic'],
                     data['body'],
@@ -102,7 +100,7 @@ class DatabaseConnection(object):
                     %s,
                     %s,
                     %s
-                )"""
+                );"""
                 self.cursor.execute(insert_command, (
                     data['Qn_Id'],
                     data['body'],
@@ -124,42 +122,59 @@ class DatabaseConnection(object):
             if items:
                 for item in items:
                     queries.append(item)
-                    if len(self.queries) == 11:
-                        self.queries.pop()
-                        self.queries.append(item)
+                    if len(self.last_ten_queries) == 11:
+                        self.last_ten_queries.pop()
+                        self.last_ten_queries.append(item)
                 return queries
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
         else:
             return queries
 
-    def update_entry(self, tablename, variable,
-                     new_value, identifier, id_value):
+    def update_question(self, new_topic, new_body, questionId):
         try:    
-            update_command = f"""UPDATE {tablename}
-                                SET {variable}={new_value}
-                                WHERE {identifier}={id_value}"""
-            self.cursor.execute(update_command)
+            update_command = """UPDATE questions SET topic = %s, body = %s 
+                                WHERE question_id = %s"""
+            self.cursor.execute(update_command, (new_topic, new_body, questionId))
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
+
+    def update_answer(self, answerId):
+        try:    
+            update_command = """UPDATE answers SET prefered = %s WHERE answer_id = %s"""
+            self.cursor.execute(update_command, (True, str(answerId)))
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+
     
-    def delete_entry(self, tablename,
-                     identifier, id_value):
+    def delete_entry(self, tablename, id_value):
         try:
-            delete_command = f"""DELETE {tablename}
-                                WHERE {identifier} = {id_value}"""
-            self.cursor.execute(delete_command)
+            if tablename == 'questions':
+                delete_command = """DELETE FROM questions
+                                    WHERE question_id = %s"""
+                self.cursor.execute(delete_command, (id_value, ))
+
+            if tablename == 'answers':
+                delete_command = """DELETE FROM answers
+                                    WHERE answer_id = %s"""
+                self.cursor.execute(delete_command, (id_value, ))
+
+            if tablename == 'users':
+                delete_command = """DELETE FROM users
+                                    WHERE user_id = %s"""
+                self.cursor.execute(delete_command, (id_value, ))
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
     
     def drop_table(self, tablename):
         try:
-            drop_table_command = f"DROP TABLE {tablename}"
+            drop_table_command = f"DROP TABLE {tablename} CASCADE"
             self.cursor.execute(drop_table_command)
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
 
 conn = DatabaseConnection()
+#conn.drop_table('answers')
 conn.create_Answers_table()
 conn.create_Users_table()
 conn.create_Questions_table()

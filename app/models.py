@@ -7,8 +7,8 @@ from werkzeug.security import generate_password_hash
 class Question:
     def __init__(self, topic, body):
         self.id = uuid.uuid4().int
-        self.topic = topic.strip()
-        self.body = body.strip()
+        self.topic = str(topic).strip()
+        self.body = str(body).strip()
 
     def __repr__(self):
         return {
@@ -21,7 +21,7 @@ class Question:
 class Answer:
     def __init__(self, body, Qn_Id, pref=False):
         self.answerId = uuid.uuid4().int
-        self.body = body.strip()
+        self.body = str(body).strip()
         self.Qn_Id = Qn_Id
         self.prefered = pref
 
@@ -33,16 +33,16 @@ class Answer:
             'prefered': self.prefered
         }
 
-    def prefer_answer(self, answer):
-        answer.prefered = True
+    def prefer_answer(self):
+        self.prefered = True
 
 
 class User:
     def __init__(self, username, email, password):
         self.salt = bcrypt.gensalt()
         self.id = uuid.uuid4().int
-        self.username = username.strip()
-        self.email = email.strip()
+        self.username = str(username).strip()
+        self.email = str(email).strip()
         self.password_hash = generate_password_hash(password)
     
     def __repr__(self):

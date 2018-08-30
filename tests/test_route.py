@@ -17,7 +17,7 @@ class TestRoutes(APITestCase):
     def test_user_can_get_questions(self):
         with self.client:
             res = self.client.get('/api/v1/questions')
-            self.assertEqual(res.status_code, 404)
+            self.assertEqual(res.status_code, 200)
 
     def test_user_can_get_question(self):
         res = self.client.get('/api/v1/questions/2')
@@ -25,7 +25,7 @@ class TestRoutes(APITestCase):
 
     def test_user_can_get_answers(self):
         res = self.client.get('/api/v1/questions/2/answers')
-        self.assertEqual(res.status_code, 404)
+        self.assertEqual(res.status_code, 200)
 
     def test_user_can_get_answer(self):
         res = self.client.get('/api/v1/questions/2/answers/3')
@@ -46,6 +46,7 @@ class TestRoutes(APITestCase):
             "body": "what is software?",
             "Qn_Id": 2
         }
+        
         res = self.client.post('/api/v1/questions/4/answers', json=answer)
         self.assertEqual(res.status_code, 401)
 
