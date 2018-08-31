@@ -11,7 +11,7 @@
 
 [![Coverage Status](https://coveralls.io/repos/github/cdvx/StackOverflow-lite/badge.svg?branch=Challenge-3)](https://coveralls.io/github/cdvx/StackOverflow-lite?branch=Challenge-3)
 
- please click badge to see correct coverage for this branch
+ Please click badge to see correct coverage status for this branch, it is taking a while to reflect here. Thank you!
  
 # github pages(challenge one) output: 
 https://cdvx.github.io/StackOverflow-lite/UI/user.html
