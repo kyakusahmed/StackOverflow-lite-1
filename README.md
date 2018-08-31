@@ -16,7 +16,7 @@
 # github pages(challenge one) output: 
 https://cdvx.github.io/StackOverflow-lite/UI/user.html
 
-# Chalenge one setup:
+# Challenge one setup:
 Challenge one output is set up in the gh-pages branch, and hosted on github pages
 the pages are: user.html, question.html, other links are accessible through the links on the pages
 
