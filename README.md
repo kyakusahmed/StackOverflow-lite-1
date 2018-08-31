@@ -8,7 +8,6 @@
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/529402579dc667521f19/maintainability)](https://codeclimate.com/github/cdvx/StackOverflow-lite/maintainability)
 
-[![Coverage Status](https://coveralls.io/repos/github/cdvx/StackOverflow-lite/badge.svg?branch=Challenge-3)](https://coveralls.io/github/cdvx/StackOverflow-lite?branch=Challenge-3)
 
 [![Coverage Status](https://coveralls.io/repos/github/cdvx/StackOverflow-lite/badge.svg?branch=Challenge-3)](https://coveralls.io/github/cdvx/StackOverflow-lite?branch=Challenge-3)
 
@@ -21,6 +20,9 @@ the pages are: user.html, question.html, other links are accessible through the 
 
 # Challenge 2:
 Heroku link: https://stackoverflow-lite-cdvx.herokuapp.com/
+
+# Challenge 3:
+Heroku link: https://stackoverflow-lite-cdvx2.herokuapp.com/api/v1/questions
 
 
 pivotal tracker output:
