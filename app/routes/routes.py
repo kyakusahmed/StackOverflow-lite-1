@@ -166,7 +166,7 @@ def get_answers(questionId):
                 }
                 answers.append(temp)
                 return jsonify({'answers': answers}), 200
-    return jsonify({'message': f'No Answers added yet for question {questionId}'}), 404
+    return jsonify({'message': f'No Answers added for question {questionId}.'}), 404
 
 
 @app.route('/api/v1/questions/<int:questionId>/answers/<int:answerId>',
@@ -191,7 +191,7 @@ def get_answer(questionId, answerId):
             return Response(json.dumps(['Answer not Found']),
                             status=404, mimetype='application/json')
     return jsonify({
-        f'Answer{answerId} for Question{questionId}': 'Has not been added yet'
+        f'Answer{answerId} for Question{questionId}': 'not found.'
     }), 404
 
 
@@ -296,32 +296,31 @@ def select_answer_as_preferred(questionId, answerId):
 
         if questionsList:
 
-            answer_check = valid_answer(request_data)
+            #answer_check = valid_answer(request_data)
             usr = [qn[3] for qn in questionsList if int(qn[4]) == questionId]
             
             if usr and usr[0] == current_user:
-                if answer_check[0]:
 
-                    conn.update_answer(str(answerId))
+                conn.update_answer(str(answerId))
 
-                    return jsonify({
-                        'msg': f"Answer {answerId} marked as preferred"
-                    }), 201
+                return jsonify({
+                    'msg': f"Answer {answerId} marked as preferred"
+                }), 201
+            else:
+
+                if not answer_check[0] and len(answer_check) > 1:
+                    reason = answer_check[1]
+                    return jsonify({"error": f"{reason}"})
                 else:
-
-                    if not answer_check[0] and len(answer_check) > 1:
-                        reason = answer_check[1]
-                        return jsonify({"error": f"{reason}"})
-                    else:
-                        bad_object = {
-                            "error": "Invalid answer object",
-                            "hint": '''Request format should be {
-                                'body': 'this is the body',
-                                    'Qn_Id': 2}'''
-                        }
-                        response = Response(json.dumps([bad_object]),
-                                            status=400, mimetype='application/json')
-                        return response
+                    bad_object = {
+                        "error": "Invalid answer object",
+                        "hint": '''Request format should be {
+                            'body': 'this is the body',
+                                'Qn_Id': 2}'''
+                    }
+                    response = Response(json.dumps([bad_object]),
+                                        status=400, mimetype='application/json')
+                    return response
             return jsonify({'Access denied':
                             f'Only question auhtor:{current_user} can perform this action!'})
         return jsonify({f'Attempt to select answer to Question {questionId} as prefered':

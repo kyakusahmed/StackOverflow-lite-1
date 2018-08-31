@@ -78,17 +78,42 @@ class TestRoutes(APITestCase):
             self.assertEqual(res.status_code, 404)
 
     def test_user_can_get_answer(self):
-        res = self.client.get('/api/v1/questions/2/answers/3')
-        self.assertEqual(res.status_code, 404)
+        answersList = self.conn.query_all('answers')
+        if answersList and [ans for ans in questionsList if ans[3]==3 and ans[1]==2]:
+            res = self.client.get('/api/v1/questions/2/answers/3')
+            for answer in answersList:
+                temp = {
+                            'answerId': answer[3],
+                            'author': answer[4],
+                            'body': answer[2],
+                            'prefered': answer[5],
+                            'QuestionId': answer[1]
+                        }
+            self.assertEqual(res.status_code, 200)
+            self.assertEqual(res.json, temp)
+        elif answersList and not [ans for ans in questionsList if ans[1]==2]:
+            res = self.client.get('/api/v1/questions/2/answers/3')
+            self.assertEqual(res.json, ['Answer not Found'])
+            self.assertEqual(res.status_code, 404)
+            
+        else:
+            res = self.client.get('/api/v1/questions/2/answers/3')
+            self.assertEqual(res.status_code, 404)
+            self.assertEqual(res.json, {'Answer3 for Question2': 'not found.'})
 
     def test_user_can_post_question(self):
         question = {
-            "questionId": 34,
-            "topic": "computer science",
-            "body": "what is software?"
-        }
-        res = self.client.post('/api/v1/questions', json=question)
-        self.assertEqual(res.status_code, 401)
+                "questionId": 34,
+                "topic": "computer science",
+                "body": "what is software?"
+            }
+        if self.is_logged_in() == 'Kakai':
+            res = self.client.post('/api/v1/questions', json=question)
+            self.assertEqual(res.status_code, 201)
+        else:
+            res = self.client.post('/api/v1/questions', json=question)
+            self.assertEqual(res.status_code, 401)
+
 
     def test_user_post_answer(self):
         answer = {

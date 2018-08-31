@@ -8,14 +8,15 @@ import psycopg2
 
 class DatabaseConnection(object):
     def __init__(self):
-        if os.getenv('APP_SETTING') == "testing":
+        if os.getenv('APP_SETTINGS') == "testing":
             self.dbname = "test_db"
 
         else:
             self.dbname = "clvx"
 
         try:
-            self.connection = psycopg2.connect(f"dbname={self.dbname} user='postgres' host='localhost' password='Tesxting' port='5432'")
+            
+            self.connection = psycopg2.connect(dbname=f"{self.dbname}", user='postgres', host='localhost', password='Tesxting', port='5432')
             self.connection.autocommit = True
             self.cursor = self.connection.cursor()
             self.last_ten_queries = []
