@@ -56,7 +56,7 @@ class TestRoutes(APITestCase):
             else:
                 res = self.client.get('/api/v1/questions')
                 self.assertEqual(res.status_code, 404)
-                self.assertEqual(res.json, {'message': 'No Questions added yet'})
+                self.assertEqual(res.json, {'message': 'No Questions added.'})
 
     def test_user_can_get_question(self):
         questionsList = self.conn.query_all('questions')
@@ -66,7 +66,7 @@ class TestRoutes(APITestCase):
         else:
             res = self.client.get('/api/v1/questions/2')
             self.assertEqual(res.status_code, 200)
-            self.assertEqual(res.json, {'Question 2': 'does not exist.'})
+            self.assertEqual(res.json, {'message': 'No questions added.'})
 
     def test_user_can_get_answers(self):
         answersList = self.conn.query_all('answers')
@@ -99,7 +99,7 @@ class TestRoutes(APITestCase):
         else:
             res = self.client.get('/api/v1/questions/2/answers/3')
             self.assertEqual(res.status_code, 404)
-            self.assertEqual(res.json, {'Answer3 for Question2': 'not found.'})
+            self.assertEqual(res.json, {'message': 'Question not found!'})
 
     def test_user_can_post_question(self):
         question = {

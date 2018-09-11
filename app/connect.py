@@ -186,6 +186,7 @@ class DatabaseConnection(object):
             print(error)
     
     def drop_table(self, tablename):
+        
         try:
             drop_table_command = f"DROP TABLE {tablename} CASCADE"
             self.cursor.execute(drop_table_command)
