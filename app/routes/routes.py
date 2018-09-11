@@ -175,20 +175,27 @@ def get_question(questionId):
 @app.route('/api/v1/questions/<int:questionId>/answers', methods=['GET'])
 def get_answers(questionId):
     answersList = conn.query_all('answers')
-    answers = []
-    if answersList:
-        for answer in answersList:
-            if int(answer[1]) == questionId:
-                temp = {
-                    'answerId': answer[3],
-                    'author': answer[4],
-                    'body': answer[2],
-                    'prefered': answer[5],
-                    'questionId': answer[1]
-                }
-                answers.append(temp)
-                return jsonify({'answers': answers}), 200
-    return jsonify({'message': 'No Answers added.'}), 404
+    questionsList = conn.query_all('questions')
+    if questionsList:
+        questions = [qn for qn in questionsList if int(qn[4]) == questionId]
+        if questions:
+            answers = []
+            if answersList:
+                for answer in answersList:
+                    if int(answer[1]) == questionId:
+                        temp = {
+                            'answerId': answer[3],
+                            'author': answer[4],
+                            'body': answer[2],
+                            'prefered': answer[5],
+                            'questionId': answer[1]
+                        }
+                        answers.append(temp)
+                        return jsonify({'answers': answers}), 200
+                    return jsonify({'message': 'Answer not found!'}), 404
+            return jsonify({'message': 'No Answers added.'}), 404
+        return jsonify({'message': 'Question not found!'}), 404
+    return jsonify({'message': 'No questions added!'}), 404
 
 
 @app.route('/api/v1/questions/<int:questionId>/answers/<int:answerId>',
@@ -279,7 +286,7 @@ def add_answer(questionId):
                 conn.insert_new_record('answers', answer.__repr__())
 
                 return jsonify({
-                    'message': 'Answer posted successfully'
+                    'message': 'Answer posted successfully',
                     'answer': answer.__repr__()
                 }), 201
 
@@ -315,7 +322,7 @@ def select_answer_as_preferred(questionId, answerId):
         request_data = request.get_json()
         questionsList = conn.query_all('questions')
         answersList = conn.querry_all('answers')
-]
+
         if answersList or questionsList:
 
             #answer_check = valid_answer(request_data)
@@ -381,7 +388,7 @@ def update_question(questionId):
                                     updated_question['body'],
                                     str(questionId))
                                 temp = {
-                                    'new_topic': updated_question['topic']
+                                    'new_topic': updated_question['topic'],
                                     'new_body': update_question['body']
                                 }
                                 msg = 'Question updated successfully.'
