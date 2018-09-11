@@ -133,7 +133,7 @@ def get_questions():
 def get_question(questionId):
     questionsList = conn.query_all('questions')
     answersList = conn.query_all('answers')
-    answers = [[ans[2]] for ans in answersList if int(ans[1]) == questionId]
+    
     if questionsList:
         for question in questionsList:
             if int(question[4]) == questionId:
@@ -141,13 +141,33 @@ def get_question(questionId):
                     'questionId': question[4],
                     'topic': question[1],
                     'body': question[2],
-                    'author': question[3],
-                    'answers': answers
+                    'author': question[3]
                 }
+                if answersList:
+                    ans_dict=dict()
+                    answers = [ans for ans in answersList if int(ans[1]) == questionId]
+                    for ans in answers:
+                        temp1 = {
+                            'answerId': ans[3],
+                            'body': ans[2],
+                            'author': ans[4],
+                            'prefered': ans[5],
+                            'questionId': ans[1]
+                        }
+                        
+                        ans_dict[temp1['author']] = temp1
+                        temp = {
+                            'questionId': question[4],
+                            'topic': question[1],
+                            'body': question[2],
+                            'author': question[3],
+                            'answers': ans_dict
+                        }
+                        return jsonify(temp), 200
                 return jsonify(temp), 200
         return Response(json.dumps(['Question not Found']),
                         status=404, mimetype='application/json')
-    return jsonify({f'Question {questionId}': 'does not exist.'}), 200
+    return jsonify({f'Question with Id:{questionId}': 'does not exist.'}), 200
 
 
 @app.route('/api/v1/questions/<int:questionId>/answers', methods=['GET'])
