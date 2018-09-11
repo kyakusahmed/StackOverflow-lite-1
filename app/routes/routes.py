@@ -3,12 +3,12 @@ from datetime import datetime, timedelta
 from flask import Flask, Response, json, jsonify, request, url_for
 from flask_jwt_extended import (JWTManager, create_access_token,
                                 get_jwt_identity, jwt_required)
-
 from werkzeug.security import check_password_hash
+
 from app import app
-from app.models import (Answer, Question, User, valid_answer, valid_login_data,
-                        valid_question, valid_username, valid_signup_data)
 from app.connect import conn
+from app.models import (Answer, Question, User, valid_answer, valid_login_data,
+                        valid_question, valid_signup_data, valid_username)
 
 
 @app.route('/')
@@ -48,7 +48,7 @@ def login():
         )
         msg = {'access_token': f'{access_token}'}
 
-        return jsonify({f'access token created for user {username}': msg}), 200
+        return jsonify({f'User:{username} logged in.': msg}), 200
     msg = {"error": "Invalid login data",
            "Hint": """required formart is: {'username':'xyz',
                     'password': 'xyh12',}"""}
@@ -77,12 +77,12 @@ def signup():
                     username_ = username[0] + " " + username[1]
                     username = username_
                     if not valid_username(username):
-                        return jsonify({'message': f'username {username} already taken!'}), 401
+                        return jsonify({'message': f'Username: {username} already taken!'}), 401
                 elif len(username) == 1:
                     username = username[0]
                     if not valid_username(username):
-                        return jsonify({'message': f'username {username} already taken!'}), 401
-                if not email:
+                        return jsonify({'message': f'Username: {username} already taken!'}), 401
+                elif not email:
                     return jsonify({'message': 'Required parameter: email missing!'}), 400
                 elif not password:
                     return jsonify({'message': 'Required parameter: password missing!'}), 400
@@ -126,7 +126,7 @@ def get_questions():
             }
             questions.append(temp)
         return jsonify({'questions': questions}), 200
-    return jsonify({'message': 'No Questions added yet'}), 404
+    return jsonify({'message': 'No Questions added.'}), 404
 
 
 @app.route('/api/v1/questions/<int:questionId>', methods=['GET'])
@@ -144,30 +144,32 @@ def get_question(questionId):
                     'author': question[3]
                 }
                 if answersList:
-                    ans_dict=dict()
+                    ans_list= []
                     answers = [ans for ans in answersList if int(ans[1]) == questionId]
-                    for ans in answers:
-                        temp1 = {
-                            'answerId': ans[3],
-                            'body': ans[2],
-                            'author': ans[4],
-                            'prefered': ans[5],
-                            'questionId': ans[1]
-                        }
-                        
-                        ans_dict[temp1['author']] = temp1
-                        temp = {
-                            'questionId': question[4],
-                            'topic': question[1],
-                            'body': question[2],
-                            'author': question[3],
-                            'answers': ans_dict
-                        }
-                        return jsonify(temp), 200
+                    if answers:
+                        for ans in answers:
+                            temp1 = {
+                                'answerId': ans[3],
+                                'body': ans[2],
+                                'author': ans[4],
+                                'prefered': ans[5],
+                                'questionId': ans[1]
+                            }
+                            
+                            ans_list.append(temp1)
+                            temp = {
+                                'questionId': question[4],
+                                'topic': question[1],
+                                'body': question[2],
+                                'author': question[3],
+                                'answers': ans_list
+                            }
+                            return jsonify(temp), 200
+                    return jsonify(temp), 200
                 return jsonify(temp), 200
-        return Response(json.dumps(['Question not Found']),
+            return Response(json.dumps(['Question not Found']),
                         status=404, mimetype='application/json')
-    return jsonify({f'Question with Id:{questionId}': 'does not exist.'}), 200
+    return jsonify({'message': 'No questions added.'}), 200
 
 
 @app.route('/api/v1/questions/<int:questionId>/answers', methods=['GET'])
@@ -186,7 +188,7 @@ def get_answers(questionId):
                 }
                 answers.append(temp)
                 return jsonify({'answers': answers}), 200
-    return jsonify({'message': f'No Answers added for question {questionId}.'}), 404
+    return jsonify({'message': 'No Answers added.'}), 404
 
 
 @app.route('/api/v1/questions/<int:questionId>/answers/<int:answerId>',
@@ -208,11 +210,9 @@ def get_answer(questionId, answerId):
                         'QuestionId': answer[1]
                     }
                     return jsonify(temp), 200
-            return Response(json.dumps(['Answer not Found']),
-                            status=404, mimetype='application/json')
-    return jsonify({
-        f'Answer{answerId} for Question{questionId}': 'not found.'
-    }), 404
+        return Response(json.dumps(['Answer not found!']),
+                        status=404, mimetype='application/json')
+    return jsonify({'message': 'Question not found!'}), 404
 
 
 @app.route('/api/v1/questions', methods=['POST'])
@@ -236,8 +236,8 @@ def add_question():
             conn.insert_new_record('questions', question.__repr__())
 
             return jsonify({
-                'msg': f'Question {question.id} posted successfully',
-                'Posted by': f'{current_user}'
+                'message': 'Question posted successfully',
+                'question': question.__repr__()
             }), 201
 
         else:
@@ -279,7 +279,8 @@ def add_answer(questionId):
                 conn.insert_new_record('answers', answer.__repr__())
 
                 return jsonify({
-                    'msg': f'Answer {answer.answerId} posted successfully'
+                    'message': 'Answer posted successfully'
+                    'answer': answer.__repr__()
                 }), 201
 
             else:
@@ -297,8 +298,8 @@ def add_answer(questionId):
                     response = Response(json.dumps([bad_object]),
                                         status=400, mimetype='application/json')
                     return response
-        return jsonify({f'Attempt to answer Question {questionId}':
-                        f'Question {questionId} does not exist.'}), 404
+        return jsonify({f'Attempt to answer Question with Id:{questionId}':
+                        'Question not found!.'}), 404
 
     return jsonify({
         'message': 'To post an answer, you need to be logged in',
@@ -313,38 +314,37 @@ def select_answer_as_preferred(questionId, answerId):
     if current_user:
         request_data = request.get_json()
         questionsList = conn.query_all('questions')
-
-        if questionsList:
+        answersList = conn.querry_all('answers')
+]
+        if answersList or questionsList:
 
             #answer_check = valid_answer(request_data)
             usr = [qn[3] for qn in questionsList if int(qn[4]) == questionId]
+
+            answer = [ans for ans in answersList if int(ans[1]) == questionId and int(ans[3]) == answerId]
             
             if usr and usr[0] == current_user:
 
-                conn.update_answer(str(answerId))
+                if answer[0]:
 
-                return jsonify({
-                    'msg': f"Answer {answerId} marked as preferred"
-                }), 201
-            else:
-
-                if not answer_check[0] and len(answer_check) > 1:
-                    reason = answer_check[1]
-                    return jsonify({"error": f"{reason}"})
-                else:
-                    bad_object = {
-                        "error": "Invalid answer object",
-                        "hint": '''Request format should be {
-                            'body': 'this is the body',
-                                'Qn_Id': 2}'''
+                    conn.update_answer(str(answerId))
+                    temp = {
+                        'answerId': answer[0][3],
+                        'body': answer[0][2],
+                        'author': answer[0][4],
+                        'prefered': True,
+                        'questionId': answer[0][1]
                     }
-                    response = Response(json.dumps([bad_object]),
-                                        status=400, mimetype='application/json')
-                    return response
+                    return jsonify({
+                        'message': "Answer marked as preferred",
+                        'answer': temp
+                    }), 201
+    
+                return jsonify({'message': 'Answer not found!'}), 404
             return jsonify({'Access denied':
                             f'Only question auhtor:{current_user} can perform this action!'})
-        return jsonify({f'Attempt to select answer to Question {questionId} as prefered':
-                        f'Question {questionId} does not exist.'}), 404
+        return jsonify({'message':
+                        'Question not found'}), 404
 
     return jsonify({
         'message': 'To post an answer, you need to be logged in',
@@ -380,8 +380,13 @@ def update_question(questionId):
                                     updated_question['topic'],
                                     updated_question['body'],
                                     str(questionId))
-                                msg = f'Question {questionId} updated successfully.'
-                                return jsonify({'msg': msg}), 200
+                                temp = {
+                                    'new_topic': updated_question['topic']
+                                    'new_body': update_question['body']
+                                }
+                                msg = 'Question updated successfully.'
+                                return jsonify({'message': msg,
+                                                'updated_question': temp}), 200
                     return jsonify({
                         'msg': 'body and topic fields should not be empty'})
             msg = f'Only question auhtor:{current_user} can perform this action!'
