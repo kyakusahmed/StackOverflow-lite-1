@@ -62,50 +62,60 @@ def signup():
         return jsonify({'message': 'JSON missing in request!'}), 400
 
     if valid_signup_data(request_data):
+        print('valid data')
         username = str(request_data['username']).split()
         email = request_data['email']
         password = request_data['password']
         repeat_password = request_data['repeat_password']
 
         if not username:
+            print('not username')
             return jsonify({
                 'message': 'Required parameter: username missing!'
             }), 400
-        else:
-            if username:
-                if len(username) > 1:
-                    username_ = username[0] + " " + username[1]
-                    username = username_
-                    if not valid_username(username):
-                        return jsonify({'message': f'Username: {username} already taken!'}), 401
-                elif len(username) == 1:
+        elif username:
+            print('username')
+            if len(username) > 1:
+                username_ = username[0] + " " + username[1]
+                username = username_
+                if not valid_username(username):
+                    return jsonify({'message': f'Username: {username} already taken!'}), 401
+            else:
+                if len(username) == 1:
                     username = username[0]
                     if not valid_username(username):
                         return jsonify({'message': f'Username: {username} already taken!'}), 401
-                elif not email:
-                    return jsonify({'message': 'Required parameter: email missing!'}), 400
-                elif not password:
-                    return jsonify({'message': 'Required parameter: password missing!'}), 400
-                else:
-                    if not repeat_password:
-                        msg = 'Required parameter: repeat_password missing!'
-                        return jsonify({'message': f'{msg}'}), 400
 
-                if repeat_password == password:
+        if not email or len(email.strip()) == 0:
+            print("not email, valid username")
+            return jsonify({'message': 'Required parameter: email missing!'}), 400
+        if username and email:
+            print('valid username and email')
+            if not password or len(str(password).strip()) == 0:
+                print("not password")
+                return jsonify({'message': 'Required parameter: password missing!'}), 400
 
-                    user = User(username, email, password)
-                    conn.insert_new_record('users', user.__repr__())
-                
-                    return jsonify({
-                        'success': f"{username}'s account created successfully"
-                    }), 200
-                else:
-                    if repeat_password != password:
+        if username and email and password:
+            if not repeat_password or len(str(repeat_password).strip()) == 0:
+                print("not_repeat pw")
+                msg = 'Required parameter: repeat_password missing!'
+                return jsonify({'message': f'{msg}'}), 400
+            else:
+                if repeat_password:
+                    if  repeat_password == password:
+                        user = User(username, email, password)
+                        conn.insert_new_record('users', user.__repr__())
+                    
                         return jsonify({
-                            'message': 'Password does not match repeat_password'
-                        }), 401
+                            'success': f"{username}'s account created successfully"
+                        }), 200
+                    else:
+                        if repeat_password != password:
+                            return jsonify({
+                                'message': 'Password does not match repeat_password'
+                            }), 401
     msg = {"error": "Invalid signup data",
-           "Hint": """required formart is: {'username':'xyz',
+        "Hint": """required formart is: {'username':'xyz',
                     'email':'xyz@gmail.com',
                     'password': 'xyh12',
                     'repeat_password':'xyh12'}"""}
@@ -133,42 +143,44 @@ def get_questions():
 def get_question(questionId):
     questionsList = conn.query_all('questions')
     answersList = conn.query_all('answers')
+    ans_list= []
     
     if questionsList:
-        for question in questionsList:
-            if int(question[4]) == questionId:
+        question = [qn for qn in questionsList if int(qn[4])==questionId]
+        if question and not answersList:
+            print(question)
+            temp = {
+                'questionId': question[0][4],
+                'topic': question[0][1],
+                'body': question[0][2],
+                'author': question[0][3]
+            }
+            return jsonify(temp), 200
+        if question and answersList:
+            answers = [ans for ans in answersList if int(ans[1]) == questionId]
+            if answers:
+                for ans in answers:
+                    temp1 = {
+                        'answerId': ans[3],
+                        'body': ans[2],
+                        'author': ans[4],
+                        'prefered': ans[5],
+                        'questionId': ans[1]
+                    }
+                    
+                    ans_list.append(temp1)
                 temp = {
-                    'questionId': question[4],
-                    'topic': question[1],
-                    'body': question[2],
-                    'author': question[3]
+                    'questionId': question[0][4],
+                    'topic': question[0][1],
+                    'body': question[0][2],
+                    'author': question[0][3],
+                    'answers': ans_list
                 }
-                if answersList:
-                    ans_list= []
-                    answers = [ans for ans in answersList if int(ans[1]) == questionId]
-                    if answers:
-                        for ans in answers:
-                            temp1 = {
-                                'answerId': ans[3],
-                                'body': ans[2],
-                                'author': ans[4],
-                                'prefered': ans[5],
-                                'questionId': ans[1]
-                            }
-                            
-                            ans_list.append(temp1)
-                            temp = {
-                                'questionId': question[4],
-                                'topic': question[1],
-                                'body': question[2],
-                                'author': question[3],
-                                'answers': ans_list
-                            }
-                            return jsonify(temp), 200
-                    return jsonify(temp), 200
                 return jsonify(temp), 200
-            return Response(json.dumps(['Question not Found']),
+            
+        return Response(json.dumps(['Question not Found']),
                         status=404, mimetype='application/json')
+        
     return jsonify({'message': 'No questions added.'}), 200
 
 
@@ -276,7 +288,7 @@ def add_answer(questionId):
         if questionsList:
             answer_check = valid_answer(request_data)
             ids = [int(qn[4]) for qn in questionsList]
-            if answer_check[0]:
+            if answer_check[0] and questionId in ids:
                 temp = {
                     'Qn_Id': questionId,
                     'body': request_data['body']
@@ -319,9 +331,9 @@ def add_answer(questionId):
 def select_answer_as_preferred(questionId, answerId):
     current_user = get_jwt_identity()
     if current_user:
-        request_data = request.get_json()
+        # request_data = request.get_json()
         questionsList = conn.query_all('questions')
-        answersList = conn.querry_all('answers')
+        answersList = conn.query_all('answers')
 
         if answersList or questionsList:
 
@@ -389,7 +401,7 @@ def update_question(questionId):
                                     str(questionId))
                                 temp = {
                                     'new_topic': updated_question['topic'],
-                                    'new_body': update_question['body']
+                                    'new_body': updated_question['body']
                                 }
                                 msg = 'Question updated successfully.'
                                 return jsonify({'message': msg,
@@ -426,7 +438,7 @@ def delete_question(questionId):
                             conn.delete_entry('questions', str(questionId))
 
                             message = {
-                                'success': f"Question {questionId} deleted successfully!"}
+                                'success': f"Question deleted!"}
                             response = Response(
                                 json.dumps(message), status=202, mimetype='application/json')
                             return response
