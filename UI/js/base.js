@@ -1,2 +1,4 @@
 /* Resgister new user */
-let signUp = (e) =>
+let signUp = (e) => {
+    
+}
