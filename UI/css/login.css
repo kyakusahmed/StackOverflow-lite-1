@@ -6,11 +6,12 @@ body {
 	font: 15px/1.5 Arial,Helvetica, sans-seriff;
 	padding: 0;
 	margin: 0;
+	background:  #a1d3b0;
 	/*background-color: #35424a;*/
-	background-color:#f4f4f4;
+	/* background-color:#f4f4f4;
 	background: -webkit-linear-gradient( to right, #a1d3b0, #f6f1d3);
 	background: -moz-linear-gradient( to right, #a1d3b0, #f6f1d3);
-	background: linear-gradient( to right, #a1d3b0, #f6f1d3);
+	background: linear-gradient( to right, #a1d3b0, #f6f1d3); */
 	font-family: "Simplifica";
 	font-size: 20px;
 }
@@ -155,7 +156,7 @@ header a:hover{
 	/*border: #35424a 2px solid;*/
 	margin-left:20%;
 	margin-right: 20%;
-	min-height:60%;
+	min-height: 80%;
 	padding-top: 20px;
 	padding-bottom: 10px;
 	width :55%;
@@ -188,15 +189,18 @@ header a:hover{
 }
 
 #register form{
-	min-height: 200px;
-	margin-bottom: 100px;
+	min-height:380px;
+	margin-bottom: 10px;
 
 }
+
+
 
 #register form h3{
 	margin-bottom:0;
 	color: rgb(68, 182, 106);
 }
+
 
 #register form input{
 	box-shadow: 10px;
