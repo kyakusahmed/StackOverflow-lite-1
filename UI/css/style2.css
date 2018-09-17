@@ -7,7 +7,12 @@ body {
 	font: 15px/1.5 Arial,Helvetica, sans-seriff;
 	padding: 0;
 	margin: 0;
-	background-color: #f4f4f4;
+	background-color:  #ffffff;
+	background: -webkit-linear-gradient( to right, #a1d3b0, #f6f1d3);
+	background: -moz-linear-gradient( to right, #a1d3b0, #f6f1d3);
+	background: linear-gradient( to right, #a1d3b0, #f6f1d3);
+	font-family: "Simplifica";
+	font-size: 20px;
 }
 
 /*Global*/
@@ -23,36 +28,54 @@ ul{
 
  }
 
+ @font-face {
+    font-family: 'Simplifica';
+    src:url('../fonts/Simplifica.ttf.woff') format('woff'),
+        url('../fonts/Simplifica.ttf.svg#Simplifica') format('svg'),
+        url('../fonts/Simplifica.ttf.eot'),
+        url('../fonts/Simplifica.ttf.eot?#iefix') format('embedded-opentype'); 
+    font-weight: normal;
+    font-style: normal;
+} 
+
  
 .button_1{
 	height: 30px;
 	margin :20px;
-	color: #ffffff;
+	font-family: "Simplifica";
+	font-size:20px ;
+	color: rgb(68, 182, 106);
 	/*padding-left: 20px;
 	padding-right: 20px;*/
-	padding: 5px 20px 5px 20px;
-	background: #e8491d;
+	padding: 5px 20px 10px 20px;
+	background: #1c1d1c;
+	border-radius: 15px;
 	border-color:#35424a; 
 }
 
 /*Header*/
 header {
-	/*background-color: #35424a;*/
-	background:url("../img/img2.jpg") no-repeat;
+	background-color: #1c1d1c;
+	/* background:url("../img/img2.jpg") no-repeat; */
 	color: #f4f4f4;
 	/*color:orange;*/
 	font-size: 20px;
 	padding-top:30px;
 	padding-bottom: 0;
 	min-height: 70px;
-	border-bottom: #e8491d 4px solid;
+	/* border-bottom: black 1px solid; */
 }
 
+header #hr{
+	/* border-bottom: #e8491d 3px solid; */
+	margin-bottom: 0;
+	padding: 0;
+}
 header a{
- 	color: #ffffff; 
+ 	color: /*#ffffff*/ rgb(68, 182, 106); 
  	text-decoration:none;
  	text-transform: uppercase; 
- 	font-size: 15px;
+ 	font-size: 25px;
  }
 
 header li{
@@ -61,14 +84,15 @@ header li{
  	padding:0 20px 0 20px;
  }
 
-head #branding{
+header #branding{
 	float: left;
+	
 }
 
 header #branding a{
 	text-decoration: none;
 	text-transform: none;
-	font-size: 20px;
+	font-size: 35px;
 }
 
 header #branding h1{
@@ -76,8 +100,11 @@ header #branding h1{
 }
 
 header nav{
+	padding-top: 30px;
 	float:right;
 	margin-top: 10px;
+	margin-right: 0;
+	margin-bottom: 0;
 }
 
 header .highlight, header .current a{
@@ -88,6 +115,7 @@ header .highlight, header .current a{
 header a:hover{
 	color: #CCCCCC;
 	font-weight:bold;
+	
 }
 
 
@@ -95,6 +123,7 @@ header a:hover{
 #showcase{
 	min-height: 400px;
 	width: 70%;
+	padding:1px;
 	/*background:url("../img/015.jpg") no-repeat;*/
 	/*margin:20px;*/
 	color : black;
@@ -106,8 +135,28 @@ header a:hover{
 	color: black;
 }
 
+#showcase a p{
+	border-radius: 10px /*solid rgb(201, 73, 73)*/;
+	border-bottom: 1px solid #c0c0c0;
+	padding:10px;
+	background: #f4f4f4;
+}
+
 #showcase h3{
 	text-decoration: none;
+	border-radius: 25px;
+	margin-left: 25%;
+	max-width: 200px;
+	color: rgb(68, 182, 106);
+	border-top: 2px solid #5b6469;
+	border-left: 2px solid #5b6469;
+	border-right: 2px solid black;
+	border-bottom: 2px solid black;
+	font-weight: bold;
+	text-align: center;
+	border-radius: 25px ;
+	background: #1c1d1c;
+	padding: 2px;
 }
 
 /*content*/
@@ -127,14 +176,19 @@ header a:hover{
 	float: right;
 }
 #question .box{
-	background:url("../img/kybrd.jpeg") ;
+	
+	background:/*url("../img/kybrd.jpeg")*/#1c1d1c;
+	background: -webkit-linear-gradient( #572e03, #1c1d1c);
+	background: -moz-linear-gradient( #572e03, #1c1d1c); /*#a79c0a*/
+	background: linear-gradient( #572e03, #1c1d1c);
+	border-radius: 10px;
 	/*border: #35424a 4px solid;*/
 
 }
 
 #question h2{
 	margin-top: 20px;
-	color: #ffffff;
+	color: rgb(68, 182, 106);
 	font-weight: bold;
 	text-decoration:none; 
 }
@@ -144,7 +198,13 @@ header a:hover{
 
 }
 
+#question form h3{
+	color: rgb(68, 182, 106);
+	margin-bottom:0;
+}
+
 #question form input{
+	border-radius :8px;
  	min-height:30px;
  	padding:3px ;
  	width: 90%;
@@ -157,16 +217,19 @@ footer{
 	clear: both;
 	margin-bottom: 0;
 	width: 100%;
-	/*background-color: #35424a;*/
-	background:url("../img/img2.jpg") no-repeat;
-	border-top:#e8491d  4px solid;
+	background-color: #1c1d1c;
+	
+	/* background:url("../img/img2.jpg") no-repeat; */
+	/* border-top:black  4px solid; */
 	text-decoration: none;
 }
 
 footer p{
+	text-align: center;
 	padding:10px;
+	font-size: 25px;
 	margin:0;
-	color: #ffffff;
+	color: rgb(68, 182, 106);
 	text-align: center;
 	
 }
