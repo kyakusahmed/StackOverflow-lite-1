@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<meta name="description" content="Platform where users can post,view and answer questions about programming and code." />
 		<meta name="keywords" content="code,programming,computer science,programming languages" />
 		<meta name="author" content="Cedric Lusiba" />
@@ -23,30 +23,31 @@
 					</ul>
 				</nav>
 			</div>
+			<div id="hr"></div>
 		</header>
 		<section id="content">
 			<section id="showcase">
 				<div class="container">
-					<h3>Recent questions</h3>
+					<h3 style="text-align: center;">Recent questions</h3>
 					<a href="question.html">
-					<p>&bull; What is Python?</p>
-					<p>&bull; What is computer science?</p>
-					<p>&bull; What's programming?</p>
-					<p>&bull; What are data structures?
+					<p> What is Python?</p>
+					<p> What is computer science?</p>
+					<p> What's programming?</p>
+					<p> What are data structures?
 						Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 						Vivamus nec tortor ac purus luctus lobortis id et magna.
 						Pellentesque id odio volutpat, fermentum neque non, vestibulum enim.
 						Vivamus aliquet libero quis orci mattis tincidunt.
 					</p>
-					<p>&bull; what is a program?</p>
-					<p>&bull; What is a web service?</p>
-					<p>&bull; How to write a restful API
+					<p> what is a program?</p>
+					<p> What is a web service?</p>
+					<p> How to write a restful API
 						Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 						Vivamus nec tortor ac purus luctus lobortis id et magna.
 						Pellentesque id odio volutpat, fermentum neque non, vestibulum enim.
 						Vivamus aliquet libero quis orci mattis tincidunt.
 					</p>
-					<p>&bull; What is django
+					<p> What is django
 						Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 						Vivamus nec tortor ac purus luctus lobortis id et magna.
 						Pellentesque id odio volutpat, fermentum neque non, vestibulum enim.
@@ -61,9 +62,16 @@
 					<div class="container">
 						<h2>Ask Question</h2>
 						<form>
-							<input type="question" placeholder="Enter Question..">
-							<button type="submit" class="button_1">Post Question</button>
-							
+							<h3>Topic</h3><input type="question" placeholder="Enter Question Topic..">
+							<h3>Body</h3><input type="question" placeholder="Enter Question..">
+							<button type="submit"  class="button_1"><b>Post Question</b></button>
+						
+							<script>
+								let button = document.querySelector("button");
+								button.addEventListener("click", ()=> {
+									/*alert("Question posted!");*/
+								});
+							</script>
 						</form>
 					</div>	
 				</div>
