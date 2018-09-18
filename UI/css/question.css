@@ -48,26 +48,58 @@ ul{
 	padding-right: 20px;
 	border-radius: 15px;
 	background: #1c1c1c;
-	border-color:#35424a; 
+	font-family: "Simplifica";
+	border-color: #35424a; 
 }
 
 .prefered{
+	float: right;
+	text-align: center;
 	height: 25px;
-	margin :20px;
-	color: #1c1c1c;
+	margin :0 20px 10px 20px;
+	/* margin-left: 80%; */
+	color: rgb(68, 182, 106);
 	padding-left: 2px;
 	padding-right: 2px;
 	border-radius: 7px;
-	background: rgb(68, 182, 106) ;
+	/* background-color: rgb(68, 182, 106) ; */
 	border-color:#35424a;
+}
+#answers p strong {
+	padding: .25%;
+	width: 110px;
+	background-color: #1c1c1c;
+	border:1px #574713 solid ;
+	/* clear: left; */
+}
+
+answers p b{
+	border:1px #35424a solid ;
+}
+
+#answers p b a{
+	width: 140px;
+	padding: .3%;
+	background: #e8491d ;
+	border-radius: 7px;
+	/* background-color: rgb(68, 182, 106); */
+	color: #252525;
+	text-decoration: none;
+	font-style: bold;
+	/* border:1px #35424a solid ; */
 }
 
 .prefer{
 	height: 25px;
-	margin : 20px;
-	color: #1c1c1c;
+	/* margin : 20px; */
+	float: right;
+	text-align: center;
+	width: 100px;
+	/* color: #1c1c1c; */
 	padding-left: 2px;
 	padding-right: 2px;
+	font-family: "Simplifica";
+	font-size: 20px;
 	border-radius: 7px;
 	background: #e8491d ;
 	border-color:#648ea7;
