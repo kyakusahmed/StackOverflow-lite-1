@@ -34,6 +34,7 @@ function fetchAnswers(questionId){
     
                 Qtn.innerHTML = `${json.message}`
                 append(Qtns2, Qtn)
+                
             }
             if ("answers" in json){
                 for (let answer of  json.answers){
