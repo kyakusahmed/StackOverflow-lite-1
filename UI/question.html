@@ -6,9 +6,10 @@
 		<meta name="description" content="Platform where users can post,view and answer questions about programming and code." />
 		<meta name="keywords" content="code,programming,computer science,programming languages" />
 		<meta name="author" content="Cedric Lusiba" />
-		<title>StackOverflow-lite</title>
+		<title>StackOverflow-lite-question</title>
 		<link rel="stylesheet" type="text/css" href="./css/question.css" />
-	<body>
+		<script src="./js/base.js"></script>
+	<body onload="onDocumentReady()">
 		<header>
 			<div class='container' id="container">
 				<div id="branding">
@@ -35,6 +36,7 @@
 
 					<p><h4>Answers</h4></p>
 					<div id="answers">
+						<div id="Qtns2"></div>
 						<p> programming is the 
 							<b class="prefer"><a class="choose" href="">Prefer answer</a></b>
 						</p>
