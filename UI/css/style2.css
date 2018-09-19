@@ -38,7 +38,11 @@ ul{
     font-style: normal;
 } 
 
- 
+li{
+	list-style: none;
+}
+
+
 .button_1{
 	height: 30px;
 	margin :20px;
@@ -135,7 +139,7 @@ header a:hover{
 	color: black;
 }
 
-#showcase a p{
+#showcase #Qtns p{
 	border-radius: 10px /*solid rgb(201, 73, 73)*/;
 	border-bottom: 1px solid #c0c0c0;
 	padding:10px;
