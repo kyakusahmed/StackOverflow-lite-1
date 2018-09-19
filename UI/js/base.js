@@ -2,7 +2,7 @@
 // require("es6-promise").polyfill();
 // require("isomorphic-fetch");
 // var fetch = require("node-fetch")
-
+ 
  
 
 function handleErrors(response) {
@@ -53,10 +53,9 @@ function onDocumentReady(){
             console.log(Array.from(json.questions));
             let ids = [];
        
-  
             for (let question of json.questions){
                 ids.push(question.questionId);
-                let a = createNode('a')
+                let a = createNode('a');
 
                 console.log(question);
                 console.log(ids)
