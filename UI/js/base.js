@@ -1,4 +1,5 @@
 
+
 // require("es6-promise").polyfill();
 // require("isomorphic-fetch");
 // var fetch = require("node-fetch")
@@ -34,7 +35,7 @@ function fetchAnswers(questionId){
     
                 Qtn.innerHTML = `${json.message}`
                 append(Qtns2, Qtn)
-                
+
             }
             if ("answers" in json){
                 for (let answer of  json.answers){
@@ -134,3 +135,4 @@ function onDocumentReady(){
     }
 }
     
+
