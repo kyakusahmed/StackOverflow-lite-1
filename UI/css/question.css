@@ -7,18 +7,11 @@ body {
 	font: 15px/1.5 Arial,Helvetica, sans-seriff;
 	padding: 0;
 	margin: 0;
-<<<<<<< HEAD
 	background:  #a1d3b0;
 	/* background-color: #ffffff;
 	background: -webkit-linear-gradient( to right, #a1d3b0, #f6f1d3);
 	background: -moz-linear-gradient( to right, #a1d3b0, #f6f1d3);
 	background: linear-gradient( to right, #a1d3b0, #f6f1d3); */
-=======
-	background-color: #ffffff;
-	background: -webkit-linear-gradient( to right, #a1d3b0, #f6f1d3);
-	background: -moz-linear-gradient( to right, #a1d3b0, #f6f1d3);
-	background: linear-gradient( to right, #a1d3b0, #f6f1d3);
->>>>>>> Challenge-4
 	font-family: "Simplifica";
 	font-size: 20px;
 
@@ -37,7 +30,6 @@ ul{
 
  }
 
-<<<<<<< HEAD
 li{
 	list-style: none;
 }
@@ -46,8 +38,6 @@ li{
 	text-decoration: none;
 }
 
-=======
->>>>>>> Challenge-4
 @font-face {
     font-family: 'Simplifica';
     src:url('../fonts/Simplifica.ttf.woff') format('woff'),
@@ -66,7 +56,6 @@ li{
 	padding-right: 20px;
 	border-radius: 15px;
 	background: #1c1c1c;
-<<<<<<< HEAD
 	font-family: "Simplifica";
 	border-color: #35424a; 
 }
@@ -122,9 +111,6 @@ answers p b{
 	border-radius: 7px;
 	background: #e8491d ;
 	border-color:#648ea7;
-=======
-	border-color:#35424a; 
->>>>>>> Challenge-4
 }
 
 /*Header*/
@@ -205,13 +191,14 @@ header a:hover{
 
 #showcase strong h3{
 	text-decoration: none;
-	text-align: center;
+	/* text-align: center; */
 	color: #1c1c1c;
+	
 	/* border-bottom : 2px solid #35424a; */
 	/* padding: 3px 10px 3px 10px; */
 	/*border-radius: 5px solid rgb(201, 73, 73)*/;
 	font-size: 30px;
-	padding-top:10px;
+	padding-top:0;
 	margin:0;
 	/*background: rgb(236, 151, 81);*/
 }
@@ -219,6 +206,24 @@ header a:hover{
 #showcase strong{
 	background: #e8491d;
 }
+
+#showcase strong li span strong{
+	background: #a1d3b0;
+}
+
+#showcase strong li h3, span{
+	margin-left: 15px;
+}
+
+#showcase strong li{
+	text-align: left;
+	border-radius: 10px /*solid rgb(201, 73, 73)*/;
+	border-bottom: 1px solid #e8491d;
+	border-left: 1px solid #1c1c1c;
+	padding:10px;
+	
+}
+
 
 #showcase h4{
 	border-top: 2px solid #35424a;
@@ -263,8 +268,10 @@ header a:hover{
 #answer .box{
 	/*background: grey;*/
 	align-self: center;
+	margin-top: 0;
+	margin-right: 22.5%;
 	margin-left: 22.5%;
-	width:50%;
+	min-width:50%;
 	
 	border-radius: 10px;
 	background:/*url("../img/kybrd.jpeg")*/#1c1d1c;
@@ -280,27 +287,66 @@ header a:hover{
 }
 
 
+#alert {
+	font-family: "Simplifica";
+	background: #1c1c1c;
+	text-align: center;
+	font-style:bold;
+	/* display: none; */
+	border-radius: 15px;
+	/* border-bottom: solid 1px #a1d3b0; */
+	color: #e8491d;
+}
+
 
 #answer h2{
-	margin-top: 20px;
+	margin-top: 5px;
+	padding: 0;
+	margin-bottom: 0;
 	color: rgb(68, 182, 106);
 	font-weight: bold;
-	margin-left: 25px;
+	margin-left: 5px;
 	text-decoration:none; 
 }
 
 #answer form{
-	min-height: 30px;
+	min-height: 130px;
+
+}
+
+#answer form h3{
+	color: rgb(68, 182, 106);
+	margin-bottom:0;
+	margin-left: 5px;
 
 }
 
 #answer form input{
 	min-height:20px;
-	margin-left: 25px;
+	margin-left: 5px;
+ 	/* padding:3px ;
+	width: 80%; */
+	 /*border: #e8491d 2px solid;*/
+	border-radius :8px;
+ 	min-height:30px;
  	padding:3px ;
-	width: 80%;
- 	/*border: #e8491d 2px solid;*/
+ 	width: 78%;
 }
+
+#answer form #submit2 {
+	text-decoration: none;
+	border-radius: 15px;
+	border-top: 2px solid #35424a;
+	border-left: 2px solid #35424a;
+	border-right: 2px solid black;
+	border-bottom: 2px solid black;
+	color: rgb(68, 182, 106);
+	margin-bottom: 20px;
+	margin-left: 10px;
+	padding: 0.5%;
+	background-color: #1c1c1c;
+}
+
 #answer form .button_1{
 	color: rgb(68, 182, 106);
 	margin-top: 10px;

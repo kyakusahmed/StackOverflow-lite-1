@@ -9,7 +9,7 @@
 		<title>StackOverflow-lite-question</title>
 		<link rel="stylesheet" type="text/css" href="./css/question.css" />
 		<script src="./js/base.js"></script>
-	<body onload="onDocumentReady()">
+	<body onload="onFetchAnswers()">
 		<header>
 			<div class='container' id="container">
 				<div id="branding">
@@ -29,50 +29,18 @@
 		<section id="content">
 			<section id="showcase">
 				<div class="container">
-					<strong><h3>What are data structures in python programming?
-						please include examples and how they are used.
-					</h3></strong>
+					<strong id="Question"></strong>
 			
-
 					<p><h4>Answers</h4></p>
 					<div id="answers">
-<<<<<<< HEAD
+
 						<div id="Qtns2"></div>
 						<p> programming is the 
 							<b class="prefer"><a class="choose" href="">Prefer answer</a></b>
 						</p>
 						<p> What are data structures?
 							<strong class="prefered">Prefered answer</strong>
-						</p>
-=======
-						<p> programming is the </p>
-						<p> What are data structures?</p>
->>>>>>> Challenge-4
-						<p> 
-							Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-							Vivamus nec tortor ac purus luctus lobortis id et magna.
-							Pellentesque id odio volutpat, fermentum neque non, vestibulum enim.
-							Vivamus aliquet libero quis orci mattis tincidunt.
-							<b class="prefer"><a class="choose" href="">Prefer answer</a></b>
-						</p>
-						<p> A program is .....
-							<b class="prefer"><a class="choose" href="">Prefer answer</a></b>
-						</p>
-						<p> data structures are ......
-							<strong class="prefered">Prefered answer</strong>
-						</p>
-<<<<<<< HEAD
-=======
-						<p> A program is .....</p>
-						<p> data structures are ......</p>
->>>>>>> Challenge-4
-						<p> How to write a restful API
-							Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-							Vivamus nec tortor ac purus luctus lobortis id et magna.
-							Pellentesque id odio volutpat, fermentum neque non, vestibulum enim.
-							Vivamus aliquet libero quis orci mattis tincidunt.
-							<b class="prefer"><a class="choose" href="">Prefer answer</a></b>							
-						</p>
+						</p>	
 						<p> What is django
 							Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 							Vivamus nec tortor ac purus luctus lobortis id et magna.
@@ -88,9 +56,12 @@
 				<div class="box">
 					<div class="container">
 						<h2>Answer Question</h2>
+						<div id="alert"></div>
 						<form>
-							<input type="answer" placeholder="Enter Answer..">
-							<button type="submit" class="button_1">Post Answer</button>
+							<h3>Body</h3><input id="body" name="body" type="text" placeholder="Enter Answer..">
+							<h3></h3>
+							<a id="submit2" ><b>Post Answer</b></a>
+							<h3></h3>
 							
 						</form>
 					</div>	

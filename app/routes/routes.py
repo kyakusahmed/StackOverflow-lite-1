@@ -44,15 +44,15 @@ def login():
 
         access_token = create_access_token(
             identity=username,
-            fresh=timedelta(minutes=60)
+            fresh=timedelta(minutes=1440)
         )
         msg = {'access_token': f'{access_token}'}
 
-        return jsonify({f'User:{username} logged in.': msg}), 200
-    msg = {"error": "Invalid login data",
+        return jsonify(msg), 200
+    msg = {"message": "Invalid login data",
            "Hint": """required formart is: {'username':'xyz',
                     'password': 'xyh12',}"""}
-    return jsonify(msg)
+    return jsonify(msg), 400
 
 
 @app.route('/api/v1/auth/signup', methods=['POST'])
@@ -62,8 +62,8 @@ def signup():
         return jsonify({'message': 'JSON missing in request!'}), 400
 
     if valid_signup_data(request_data):
-        print('valid data')
-        username = str(request_data['username']).split()
+        print('request data', request_data)
+        username = str(request_data['username']).strip().split()
         email = request_data['email']
         password = request_data['password']
         repeat_password = request_data['repeat_password']
@@ -74,7 +74,7 @@ def signup():
                 'message': 'Required parameter: username missing!'
             }), 400
         elif username:
-            print('username')
+            print('username', username)
             if len(username) > 1:
                 username_ = username[0] + " " + username[1]
                 username = username_
@@ -108,18 +108,17 @@ def signup():
                     
                         return jsonify({
                             'success': f"{username}'s account created successfully"
-                        }), 200
-                    else:
-                        if repeat_password != password:
-                            return jsonify({
-                                'message': 'Password does not match repeat_password'
-                            }), 401
+                        }), 201
+                    if repeat_password and repeat_password != password:
+                        return jsonify({
+                            'message': 'Password does not match repeat_password'
+                        }), 401
     msg = {"error": "Invalid signup data",
         "Hint": """required formart is: {'username':'xyz',
                     'email':'xyz@gmail.com',
                     'password': 'xyh12',
                     'repeat_password':'xyh12'}"""}
-    return jsonify(msg)
+    return jsonify(msg), 400
 
 
 @app.route('/api/v1/questions', methods=['GET'])
@@ -255,17 +254,17 @@ def add_question():
             conn.insert_new_record('questions', question.__repr__())
 
             return jsonify({
-                'message': 'Question posted successfully',
+                'success': 'Question posted successfully',
                 'question': question.__repr__()
             }), 201
 
         else:
             if not duplicate_check[0] and len(duplicate_check) > 1:
                 reason = duplicate_check[1]
-                return jsonify({"error": f"{reason}"})
+                return jsonify({"message": f"{reason}"})
             else:
                 bad_object = {
-                    "error": "Invalid question object",
+                    "message": "Invalid question object",
                     "hint": '''Request format should be,{'topic': 'python',
                         'body': 'what is python in programming' }'''
                 }
@@ -298,7 +297,7 @@ def add_answer(questionId):
                 conn.insert_new_record('answers', answer.__repr__())
 
                 return jsonify({
-                    'message': 'Answer posted successfully',
+                    'success': 'Answer posted successfully',
                     'answer': answer.__repr__()
                 }), 201
 
@@ -306,7 +305,7 @@ def add_answer(questionId):
 
                 if not answer_check[0] and len(answer_check) > 1:
                     reason = answer_check[1]
-                    return jsonify({"error": f"{reason}"})
+                    return jsonify({"message": f"{reason}"})
                 else:
                     bad_object = {
                         "error": "Invalid answer object",
@@ -314,11 +313,11 @@ def add_answer(questionId):
                             'body': 'this is the body',
                                 'Qn_Id': 2}'''
                     }
-                    response = Response(json.dumps([bad_object]),
-                                        status=400, mimetype='application/json')
-                    return response
-        return jsonify({f'Attempt to answer Question with Id:{questionId}':
-                        'Question not found!.'}), 404
+
+                    return jsonify({'message': bad_object}), 400
+        msg = {f'Attempt to answer Question with Id:{questionId}':
+               'Question not found!.'}
+        return jsonify({'message': msg}), 404
 
     return jsonify({
         'message': 'To post an answer, you need to be logged in',

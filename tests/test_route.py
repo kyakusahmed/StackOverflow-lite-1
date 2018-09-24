@@ -25,7 +25,7 @@ class TestRoutes(APITestCase):
             '/api/v1/auth/signup', content_type="application/json", data=json.dumps(self.data))
         msg = {'success': "Kakai's account created successfully"}
         self.assertEqual(res.json, msg)
-        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.status_code, 201)
 
     def test_user_can_login(self):
         self.data = {
@@ -43,7 +43,7 @@ class TestRoutes(APITestCase):
         }
         res2 = self.client.post(
             "/api/v1/auth/login", content_type="application/json", data=json.dumps(self.data2))
-        
+        # self.assertEqual(res2.json, 200)
         self.assertEqual(res2.status_code, 200)
 
     def test_user_can_get_questions(self):

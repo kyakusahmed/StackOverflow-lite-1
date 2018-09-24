@@ -7,21 +7,25 @@ body {
 	font: 15px/1.5 Arial,Helvetica, sans-seriff;
 	padding: 0;
 	margin: 0;
-<<<<<<< HEAD
 	background:  #a1d3b0;
 	/* background-color: #f4f4f4;
 	background: -webkit-linear-gradient( to right, #a1d3b0, #f6f1d3);
 	background: -moz-linear-gradient( to right, #a1d3b0, #f6f1d3);
 	background: linear-gradient( to right, #a1d3b0, #f6f1d3); */
-=======
-	background-color: #f4f4f4;
-	background: -webkit-linear-gradient( to right, #a1d3b0, #f6f1d3);
-	background: -moz-linear-gradient( to right, #a1d3b0, #f6f1d3);
-	background: linear-gradient( to right, #a1d3b0, #f6f1d3);
->>>>>>> Challenge-4
 	font-family: "Simplifica";
 	font-size: 20px;
 
+}
+
+#alert {
+	font-family: "Simplifica";
+	background: #1c1c1c;
+	text-align: center;
+	font-style:bold;
+	/* display: none; */
+	border-radius: 15px;
+	/* border-bottom: solid 1px #a1d3b0; */
+	color: #e8491d;
 }
 
 @font-face {
@@ -180,7 +184,7 @@ h3{
  	/*border: #e8491d 2px solid;*/
 }
 
- #register #signUp a {
+#register #signUp a {
 	text-decoration: none;
 	border-radius: 15px;
 	border-top: 2px solid #35424a;

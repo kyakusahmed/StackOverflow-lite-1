@@ -6,8 +6,9 @@
 		<meta name="description" content="Platform where users can post,view and answer questions about programming and code." />
 		<meta name="keywords" content="code,programming,computer science,programming languages">
 		<meta name="author" content="Cedric Lusiba" />
-		<title>StackOverflow-lite</title>
+		<title>StackOverflow-lite-signup</title>
 		<link rel="stylesheet" type="text/css" href="./css/signUp.css" />
+		<script src="./js/post.js"></script>
 	<body>
 		<header>
 			<div class='container' id="container">
@@ -29,17 +30,23 @@
 			<div class="box">
 				<div class="container">
 					<h2>Sign up</h2>
-					<form>
-						<p><h3>Username</h3><input type="Username" placeholder="Enter Username"></p>
+					<div id="alert"></div>
+					<form id="signUpForm" method="POST" action="signUp()" enctype="multipart/form-data">
+						<p><h3>Username</h3><input id="username" name="username" type="text" value="" placeholder="Enter Username" required="required"></p>
 						
-						<p><h3>Email</h3><input type="Email" placeholder="Enter Email"></p>
+						<p><h3>Email</h3><input id="email" name="email" value="" type="text" placeholder="Enter Email" required="required"></p>
 
-						<p><h3>Password</h3><input type="password" placeholder="Enter Password"></p>
+						<p><h3>Password</h3><input id="password" name="password" type="password" value="" placeholder="Enter Password" required="required"></p>
 
-						<p><h3>Repeat Password</h3><input type="password" placeholder="Password"></p>
+						<p><h3>Repeat Password</h3><input id="repeat_password" type="password" value="" name="repeat_password" placeholder="Password" required="required"></p>
 
 						<div id="signUp">
-						<p><a href="login.html">Sign Up</a></p>
+						<p><a id="submit" onclick="signUp()" >Sign Up</a></p>
+						<!-- <script>
+							function wrapSignUp(){
+
+							}
+						</script> -->
 						</div>
 						
 						<p><h3>Already have an account? <a href="login.html"><span class="highlight">Sign in</span></a></h3></p>

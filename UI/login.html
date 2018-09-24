@@ -6,8 +6,9 @@
 		<meta name="description" content="Platform where users can post,view and answer questions about programming and code." />
 		<meta name="keywords" content="code,programming,computer science,programming languages" />
 		<meta name="author" content="Cedric Lusiba" />
-		<title>StackOverflow-lite</title>
+		<title>StackOverflow-lite-login</title>
 		<link rel="stylesheet" type="text/css" href="./css/login.css" />
+		<script src="./js/post.js"></script>
 	<body>
 		<header>
 			<div class='container' id="container">
@@ -30,12 +31,13 @@
 				<div class="box">
 					<div class="container">
 						<strong id="seen"><h2 >Sign in</h2></strong>
-						<form>
-							<p><h3>Username</h3><input type="Username" placeholder="Enter Username or Email"></p>
+						<div id="alert"></div>
+						<form method="POST" action="login()" enctype="multipart/form-data">
+							<p><h3>Username</h3><input id="username" name="username" type="text" placeholder="Enter Username or Email"></p>
 
-							<p><h3>Password</h3><input type="password" placeholder="Enter Password"></p>
+							<p><h3>Password</h3><input id="password" name="password" type="password" placeholder="Enter Password"></p>
 							
-							<p><div id="butt"><a href="index.html">Log in</a></div></p>
+							<p><div id="butt"><a id="submit" onclick="login()">Log in</a></div></p>
 							<div id="container2">
 								<p><label class="contain"><h3>Remember me</h3>
 									<input id="remember" type="checkbox" checked="checked" >
