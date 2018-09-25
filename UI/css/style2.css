@@ -134,7 +134,13 @@ header a:hover{
 	float: left;
 }
 
+#showcase a.delete_link{
+	min-width:60px;
+}
+
 #showcase a{
+	font-size:18px;
+	min-height: 4px;
 	text-decoration: none;
 	float: right;
 	color: black;
@@ -142,8 +148,14 @@ header a:hover{
 	border-radius: 15px;
 	padding:0;
 	border: 1px solid #5a4c49;
-	min-width: 100px;
+	min-width: 78px;
 	/* margin: 20px; */
+}
+
+#showcase a:hover{
+	color: #e8491d;
+	font-weight:bold;
+	
 }
 
 
@@ -237,7 +249,7 @@ header a:hover{
 	background-color: #1c1c1c;
 }
 
-#alert {
+#alert, #alert2 {
 	font-family: "Simplifica";
 	background: #1c1c1c;
 	text-align: center;

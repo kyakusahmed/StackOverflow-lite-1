@@ -200,7 +200,7 @@ function postAnswer(questionId){
 
 
 function preferAnswer(questionId, answerId){
-    if (document.title=="StackOverflow-lite-question")
+    if (document.title=="StackOverflow-lite-question"){
         fetch(`http://localhost:5000/api/v1/questions/${questionId}/answers/${answerId}`, {
             method: "PUT",
             mode: "cors",
@@ -230,5 +230,4 @@ function preferAnswer(questionId, answerId){
         })
         .catch(error => console.log(error));
     }
-    
-
+}

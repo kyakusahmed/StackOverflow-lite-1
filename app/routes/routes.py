@@ -373,49 +373,58 @@ def select_answer_as_preferred(questionId, answerId):
 @app.route('/api/v1/questions/<int:questionId>', methods=['PATCH'])
 @jwt_required
 def update_question(questionId):
+    print(questionId)
     current_user = get_jwt_identity()
     if current_user:
         request_data = request.get_json()
         questionsList = conn.query_all('questions')
-
+        print(questionsList)
+        print('current user', current_user)
         if questionsList:
             usr = [qn[3] for qn in questionsList if int(qn[4]) == questionId]
             if usr and usr[0] == current_user:
-                updated_question = dict()
                 ids = [int(question[4]) for question in questionsList]
+                print(ids)
 
                 if questionId in ids:
-                    if "topic" in request_data:
-                        updated_question["topic"] = request_data["topic"].strip()
-                    if "body" in request_data:
-                        updated_question["body"] = request_data["body"].strip()
-                    condition_1 = len(updated_question['topic']) == 0
-                    condition_2 = len(updated_question['body']) == 0
-                    if not condition_1  or not condition_2 != 0:
+                    result = valid_question(request_data)
+                    print('result', result)
+                    if result[0]:
                         for question in questionsList:
                             if int(question[4]) == questionId:
                                 conn.update_question(
-                                    updated_question['topic'],
-                                    updated_question['body'],
+                                    request_data['topic'],
+                                    request_data['body'],
                                     str(questionId))
                                 temp = {
-                                    'new_topic': updated_question['topic'],
-                                    'new_body': updated_question['body']
+                                    'new_topic': request_data['topic'],
+                                    'new_body': request_data['body']
                                 }
                                 msg = 'Question updated successfully.'
                                 return jsonify({'success': msg,
                                                 'updated_question': temp}), 200
-                    return jsonify({
-                        'message': 'body and topic fields should not be empty'}), 400
-            msg = f'Only question auhtor:{current_user} can perform this action!'
-            return jsonify({'message': msg})
-        response = Response({'message':'Question not found'}), 404
-        return response
+                    if not result[0] and len(result) > 1:
+                        msg = {'message':result[1]}
+                        return jsonify(msg), 400
+                    if not result[0] and len(result) ==1:
+                        bad_object = {
+                            "error": "Invalid answer object",
+                            "hint": '''Request format should be {
+                                'body': 'this is the body',
+                                    'Qn_Id': 2}'''
+                        }
+                        return jsonify({'message': bad_object}), 400
 
+                return jsonify({'message':'Question not found'}), 404
+
+            msg = f'Only question auhtor:{current_user} can perform this action!'
+            return jsonify({'message': msg}), 401
+        
+        return jsonify({'message': 'No questions added'}), 404
     return jsonify({
         'message': 'To update a question, you need to be logged in',
         'info': 'Signup or login, to get access_token'
-    })
+    }), 401
 
 
 @app.route('/api/v1/questions/<int:questionId>', methods=['DELETE'])
@@ -438,18 +447,13 @@ def delete_question(questionId):
 
                             message = {
                                 'success': f"Question deleted!"}
-                            response = Response(
-                                json.dumps(message), status=202, mimetype='application/json')
-                            return response
+                            return jsonify({'success': message}), 200
             msg = f'Only question auhtor:{current_user} can perform this action!'
-            return jsonify({'Access denied': msg})
-        response = Response(json.dumps(['Question not found']),
-                            status=404, mimetype='application/json')
-        return response
+            return jsonify({'message': msg}), 401
+        return jsonify({'message': 'Question not found'}), 404
     return jsonify({
-        'message': 'To delete a question, you need to be logged in',
-        'info': 'Signup or login, to get access_token'
-    }), 401
+        'message': {'To delete a question, you need to be logged in':
+                    'Signup or login, to get access_token'}}), 401
 
 
 @app.errorhandler(500)

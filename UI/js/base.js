@@ -11,6 +11,15 @@ let alertMessage = (message) => {
     setTimeout(() => alert.style.display = 'none', 6000);
 }
 
+let alertMain = (message) => {
+    let alert = document.getElementById('alert2');
+    alert.style.display = 'block';
+    alert.style.padding = '10px';
+    alert.innerHTML = message;
+    setTimeout(() => alert.style.display = 'none', 6000);
+}
+
+
 
 function createNode(element){
     return document.createElement(element);
@@ -53,6 +62,7 @@ function onDocumentReady(){
                         span3 = createNode('span');
                         a = createNode('a');
                         a2 = createNode('a');
+                        a3 = createNode('a');
                         Qtn = createNode('p');
                         Qtns = document.getElementById('Qtns');
                         span4 = createNode('span');
@@ -64,6 +74,8 @@ function onDocumentReady(){
                         a.setAttribute('class', 'question_link');
                         a2.setAttribute('href', 'updateQuestion.html');
                         a2.setAttribute('class', 'question_link');
+                        // a3.setAttribute('class', 'question_link');
+                        a3.setAttribute('class', 'delete_link');
                         console.log("href registerd");
                         console.log(document.title);
                         console.log(question.questionId);
@@ -75,6 +87,10 @@ function onDocumentReady(){
                         a2.onclick = link =>{
                             window.localStorage.setItem('questionId-edit', question.questionId);
                             window.location.replace('./updateQuestion.html');
+                        }
+                        a3.onclick = link =>{
+                            deleteQuestion(question.questionId);
+                            
                         }
                         qtn_author = question.author;
                         console.log('qtn auth', qtn_author, typeof(qtn_author));
@@ -90,12 +106,14 @@ function onDocumentReady(){
                             span2.innerHTML = `${question.body} <br>`;
                             span3.innerHTML = ` <strong>Topic:</strong> ${question.topic} <br>`;
                             a.innerHTML = 'view answers';
-                            a2.innerHTML = 'edit question'
+                            a2.innerHTML = 'edit question';
+                            a3.innerHTML = 'delete';
                             append(li, span3);
                             append(li, span2);
                             append(li, span);
                             append(span4, a);
                             append(span4, a2);
+                            append(span4, a3);
                             append(li, span4);
                             append(Qtn, li);
                             append(Qtns, Qtn);
@@ -176,10 +194,9 @@ function updateQuestion(questionId){
             topic,
             body,
         };
-    if(postData.topic.length==0 || postData.body.length)
     console.log(`${postData}`);
-    if (document.title=="StackOverflow-lite-index")
-        fetch(`http://localhost:5000/api/v1/questions${questionId}`, {
+    if (document.title=="StackOverflow-lite-edit")
+        fetch(`http://localhost:5000/api/v1/questions/${questionId}`, {
             method: "PATCH",
             mode: "cors",
             headers: {
@@ -195,6 +212,7 @@ function updateQuestion(questionId){
 
             if ("message" in json || "msg" in json){
                 alertMessage(json.message);
+                console.log('this rubs here')
                 if (json.msg == 'Token has expired' || json.msg == 'Not enough segments'){
                     alertMessage('Please login to continue!, redirecting to login page...');
                     setTimeout(() => window.location.replace('./login.html'), 3000);
@@ -211,9 +229,45 @@ function updateQuestion(questionId){
         .catch(error => console.log(error));
     }
 
+
+
+function deleteQuestion(questionId){
+    console.log(questionId);
+    if (document.title=="StackOverflow-lite-index"){
+        fetch(`http://localhost:5000/api/v1/questions/${questionId}`, {
+            method: "DELETE",
+            mode: "cors",
+            headers: {
+                "Authorization": `Bearer ${localStorage.getItem('access')}`,
+                "content-type": "application/json"}
+        })
+        .then(res => res.json())
+        .then(json => {
+            console.log(json);
+            console.log(json.status_code);
+            console.log(JSON.stringify(json));
+
+            if ("message" in json || "msg" in json){
+                alertMain(json.message);
+                if (json.msg == 'Token has expired' || json.msg == 'Not enough segments'){
+                    alertMain('Please login to continue!, redirecting to login page...');
+                    setTimeout(() => window.location.replace('./login.html'), 3000);
+                }
+                // alertMessage(json.msg);
+            }
+            if ("success" in json){
+                alertMain(json.success);
+                window.location.reload();
+                console.log('this runs');
+            }
+        })
+        .catch(error => console.log(error));
+    }
+}
+
 function onEditQuestion(){
     questionId = window.localStorage.getItem('questionId-edit');
-    console.log('questionId');
+    console.log('questionId', questionId);
     
     if (document.title == "StackOverflow-lite-edit"){
         let Question = document.getElementById('oldQuest');
@@ -224,9 +278,7 @@ function onEditQuestion(){
             span2 = createNode('span')
             a = createNode('a');
             b = createNode('b');
-        submit.addEventListener('click', edit =>{
-            updateQuestion(questionId);
-        })
+        
         fetch(`http://localhost:5000/api/v1/questions`)
         .then(res => res.json())
         .then(json=>{
@@ -238,12 +290,14 @@ function onEditQuestion(){
                         span1.innerHTML = `<strong>Author: </strong>${question.author}`;
                         span2.innerHTML = `<strong>Topic: </strong>${question.topic}`;
                         
-                        // li.style['max-width'] = `${Math.max(json.body.length, 400)}px`;
-                        
                         append(li, span2);
                         append(li, h3);
                         append(li, span1);
                         append(Question, li);
+                        submit.addEventListener('click', edit =>{
+                            updateQuestion(questionId);
+                        })
+
                     }
                     
                 }
@@ -252,25 +306,7 @@ function onEditQuestion(){
                 window.localStorage.removeItem('questionId-edit');
             }
         })
-            /*==============================*/
     }
 
 }
 
-
-
-// h3.innerHTML = `${json.body}`;
-// span1.innerHTML = `<strong>Author: </strong>${json.author}`;
-// span2.innerHTML = `<strong>Topic: </strong>${json.topic}`;
-// b.classList.add('prefer');
-// a.classList.add('choose');
-// a.innerHTML = 'Prefer answer';
-// // li.style['max-width'] = `${Math.max(json.body.length, 400)}px`;
-// qnEdit = window.localStorage.getItem('questionId-edit')
-// append(li, span2);
-// append(li, h3);
-// append(li, span1);
-// append(Question, li);
-
-// window.localStorage.removeItem('questionId-edit');
-// })
