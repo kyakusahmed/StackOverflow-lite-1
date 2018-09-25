@@ -138,8 +138,13 @@ class TestRoutes(APITestCase):
             "body": "what is software?",
             "Qn_Id": 2
         }
-        res = self.client.post('/api/v1/questions/4/answers', json=answer)
-        self.assertEqual(res.status_code, 401)
+        if self.is_logged_in() == 'Kakai':
+            res = self.client.post('/api/v1/questions', json=question)
+            self.assertEqual(res.status_code, 201)
+            self.assertIn('success', res.json)
+        else:
+            res = self.client.post('/api/v1/questions/4/answers', json=answer)
+            self.assertEqual(res.status_code, 401)
 
     def test_user_can_update_question(self):
 
@@ -147,8 +152,13 @@ class TestRoutes(APITestCase):
             "topic": "computer science",
             "body": "what is software?"
         }
-        res = self.client.patch('/api/v1/questions/4', json=new_question)
-        self.assertEqual(res.status_code, 401)
+        if self.is_logged_in() == 'Kakai':
+            res = self.client.post('/api/v1/questions', json=question)
+            self.assertEqual(res.status_code, 201)
+            self.assertIn('success', res.json)
+        else:
+            res = self.client.patch('/api/v1/questions/4', json=new_question)
+            self.assertEqual(res.status_code, 401)
 
     def test_user_can_delete_question(self):
         res = self.client.delete('/api/v1/questions/5')
