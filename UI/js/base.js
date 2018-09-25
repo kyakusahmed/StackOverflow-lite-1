@@ -65,6 +65,9 @@ function onDocumentReady(){
                         a3 = createNode('a');
                         Qtn = createNode('p');
                         Qtns = document.getElementById('Qtns');
+                        L = document.getElementById('L');
+                        P = document.getElementById('P');
+                        S = document.getElementById('S');
                         span4 = createNode('span');
                     
 
@@ -74,7 +77,6 @@ function onDocumentReady(){
                         a.setAttribute('class', 'question_link');
                         a2.setAttribute('href', 'updateQuestion.html');
                         a2.setAttribute('class', 'question_link');
-                        // a3.setAttribute('class', 'question_link');
                         a3.setAttribute('class', 'delete_link');
                         console.log("href registerd");
                         console.log(document.title);
@@ -101,6 +103,9 @@ function onDocumentReady(){
 
                         console.log('cond 5', condition5);
                         if (!condition6 && condition5){
+                            L.style.display = 'none';
+                            S.style.display = 'none';
+                            P.style.display = 'list-item';
                             console.log('then this hsould run');
                             span.innerHTML = ` <strong>Author:</strong> ${question.author}`;
                             span2.innerHTML = `${question.body} <br>`;
@@ -120,11 +125,15 @@ function onDocumentReady(){
                         }
 
                         if (!condition5 || condition6){
+                            P.style.display = 'none';
+                            S.style.display = 'list-item';
+                            L.style.display = 'list-item';
+                            console.log('this runs?');
                             span.innerHTML = ` <strong>Author:</strong> ${question.author}`;
                             span2.innerHTML = `${question.body} <br>`;
                             span3.innerHTML = ` <strong>Topic:</strong> ${question.topic} <br>`;
                             a.innerHTML = 'view answers';
-    
+                           
                             append(li, span3);
                             append(li, span2);
                             append(li, span);

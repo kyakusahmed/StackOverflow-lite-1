@@ -94,3 +94,78 @@ function signUp(){
             })
             .catch(error => console.log(error));
         }
+
+function onProfileReady(){
+
+    if(document.title == "StackOverflow-lite-user"){
+        user = window.localStorage.getItem('user');
+        let Asked = document.getElementById('Asked');
+            Answered = document.getElementById('Answered');
+            AnsG = document.getElementById('AnsG');
+            QnsG = document.getElementById('QnsG');
+            logout = document.getElementById('logout');
+        logout.addEventListener('click', logouta => {
+            window.localStorage.clear();
+            window.location.replace('./index.html');
+        })
+        fetch('http://localhost:5000/api/v1/questions',{
+            mode: 'cors'
+        })
+        .then(res => res.json())
+        .then(json => {
+            let count = 0;
+            if ('questions' in json){
+                
+                for (let question of json.questions){
+                    if(question.author == user){
+                        let li = createNode('li');
+                        count ++;
+                        li.innerHTML = question.body;
+                        li.addEventListener('click', link => {
+                            window.localStorage.setItem('questionId1', question.questionId);
+                            window.location.replace('./question.html');
+                        })
+                        append(Asked, li);
+                    }
+                    
+                }
+                QnsG.innerHTML = `Number of questions asked: ${count}`;
+            }
+            if ('message' in json){
+                let li = createNode('li');
+                li.innerHTML = json.message;
+                QnsG.innerHTML = `Number of answers given: 0`
+            }
+        })
+        let questionId = window.localStorage.getItem('questionId1')
+        fetch(`http://localhost:5000/api/v1/questions/${questionId}/answers`, {
+            mode: 'cors'
+        })
+        .then(res => res.json())
+        .then(json => {
+            let count = 0;
+            if ('answers' in json){
+                for (let answer of json.answers){
+                    if (answer.author == user){
+                        count ++;
+                        let li = createNode('li');
+                        li.innerHTML = answer.body;
+                        li.addEventListener('click', link => {
+                            window.localStorage.setItem('questionId1', questionId);
+                            window.location.replace('./question.html');
+                        })
+                        append(Answered, li);
+                    }
+                    
+                }
+                AnsG.innerHTML = `Number of questions asked: ${count}`;
+            }
+            if ('message' in json){
+                let li = createNode('li');
+                li.innerHTML = json.message;
+                AnsG.innerHTML = `Number of answers given: 0`
+            }
+        })
+        
+    }
+}

@@ -33,6 +33,7 @@ function onFetchAnswers(){
         let submit2 = document.getElementById('submit2');
             condition1 = !document.title == "StackOverflow-lite-question";
             condition2 = !document.title == "StackOverflow-lite-index";
+            // condition2 = !document.title == "StackOverflow-lite-user";
 
         submit2.addEventListener('click', postAns => {
             postAnswer(questionId);

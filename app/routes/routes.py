@@ -62,19 +62,16 @@ def signup():
         return jsonify({'message': 'JSON missing in request!'}), 400
 
     if valid_signup_data(request_data):
-        print('request data', request_data)
         username = str(request_data['username']).strip().split()
         email = request_data['email']
         password = request_data['password']
         repeat_password = request_data['repeat_password']
 
         if not username:
-            print('not username')
             return jsonify({
                 'message': 'Required parameter: username missing!'
             }), 400
         elif username:
-            print('username', username)
             if len(username) > 1:
                 username_ = username[0] + " " + username[1]
                 username = username_
@@ -87,17 +84,13 @@ def signup():
                         return jsonify({'message': f'Username: {username} already taken!'}), 401
 
         if not email or len(email.strip()) == 0:
-            print("not email, valid username")
             return jsonify({'message': 'Required parameter: email missing!'}), 400
         if username and email:
-            print('valid username and email')
             if not password or len(str(password).strip()) == 0:
-                print("not password")
                 return jsonify({'message': 'Required parameter: password missing!'}), 400
 
         if username and email and password:
             if not repeat_password or len(str(repeat_password).strip()) == 0:
-                print("not_repeat pw")
                 msg = 'Required parameter: repeat_password missing!'
                 return jsonify({'message': f'{msg}'}), 400
             else:
@@ -147,7 +140,6 @@ def get_question(questionId):
     if questionsList:
         question = [qn for qn in questionsList if int(qn[4])==questionId]
         if question and not answersList:
-            print(question)
             temp = {
                 'questionId': question[0][4],
                 'topic': question[0][1],
@@ -373,22 +365,17 @@ def select_answer_as_preferred(questionId, answerId):
 @app.route('/api/v1/questions/<int:questionId>', methods=['PATCH'])
 @jwt_required
 def update_question(questionId):
-    print(questionId)
     current_user = get_jwt_identity()
     if current_user:
         request_data = request.get_json()
         questionsList = conn.query_all('questions')
-        print(questionsList)
-        print('current user', current_user)
         if questionsList:
             usr = [qn[3] for qn in questionsList if int(qn[4]) == questionId]
             if usr and usr[0] == current_user:
                 ids = [int(question[4]) for question in questionsList]
-                print(ids)
 
                 if questionId in ids:
                     result = valid_question(request_data)
-                    print('result', result)
                     if result[0]:
                         for question in questionsList:
                             if int(question[4]) == questionId:
