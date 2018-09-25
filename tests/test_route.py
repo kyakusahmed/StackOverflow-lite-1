@@ -36,14 +36,15 @@ class TestRoutes(APITestCase):
         }
         res = self.client.post(
             '/api/v1/auth/signup', content_type="application/json", data=json.dumps(self.data))
-
+        self.assertIn('success', res.json)
+        self.assertEqual(res.status_code, 201)
         self.data2 = {
             "username": "Kakai",
             "password": "jjq123"
         }
         res2 = self.client.post(
             "/api/v1/auth/login", content_type="application/json", data=json.dumps(self.data2))
-        # self.assertEqual(res2.json, 200)
+        self.assertIn('access_token', res2.json )
         self.assertEqual(res2.status_code, 200)
 
     def test_user_can_get_questions(self):
@@ -51,31 +52,40 @@ class TestRoutes(APITestCase):
             questionsList = self.conn.query_all('questions')
             if questionsList:
                 res = self.client.get('/api/v1/questions')
+                self.assertIn('success', res.json)
                 self.assertEqual(res.status_code, 200)
 
             else:
                 res = self.client.get('/api/v1/questions')
                 self.assertEqual(res.status_code, 404)
                 self.assertEqual(res.json, {'message': 'No Questions added.'})
+                self.assertIn('message', res.json)
 
     def test_user_can_get_question(self):
         questionsList = self.conn.query_all('questions')
         if questionsList and [qn for qn in questionsList if qn[4]==2]:
             res = self.client.get('/api/v1/questions/2')
+            self.assertIn('questionId', res.json)
+            self.assertIn('body', res.json)
+            self.assertIn('author', res.json)
+            self.assertIn('topic', res.json)
             self.assertEqual(res.status_code, 200)
         else:
             res = self.client.get('/api/v1/questions/2')
             self.assertEqual(res.status_code, 200)
             self.assertEqual(res.json, {'message': 'No questions added.'})
+            self.assertIn('message', res.json)
 
     def test_user_can_get_answers(self):
         answersList = self.conn.query_all('answers')
         if answersList:
             res = self.client.get('/api/v1/questions/2/answers')
             self.assertEqual(res.status_code, 200)
+            self.assertIn('answers', res.json)
         else:
             res = self.client.get('/api/v1/questions/2/answers')
             self.assertEqual(res.status_code, 404)
+            self.assertIn('message', res.json)
 
     def test_user_can_get_answer(self):
         answersList = self.conn.query_all('answers')
@@ -91,6 +101,11 @@ class TestRoutes(APITestCase):
                         }
             self.assertEqual(res.status_code, 200)
             self.assertEqual(res.json, temp)
+            self.assertIn('questionId', res.json)
+            self.assertIn('body', res.json)
+            self.assertIn('author', res.json)
+            self.assertIn('topic', res.json)
+            self.assertIn('Qn_Id', res.json)
         elif answersList and not [ans for ans in questionsList if ans[1]==2]:
             res = self.client.get('/api/v1/questions/2/answers/3')
             self.assertEqual(res.json, ['Answer not Found'])
@@ -100,6 +115,7 @@ class TestRoutes(APITestCase):
             res = self.client.get('/api/v1/questions/2/answers/3')
             self.assertEqual(res.status_code, 404)
             self.assertEqual(res.json, {'message': 'Question not found!'})
+            self.assertIn('message', res.json)
 
     def test_user_can_post_question(self):
         question = {
@@ -110,6 +126,7 @@ class TestRoutes(APITestCase):
         if self.is_logged_in() == 'Kakai':
             res = self.client.post('/api/v1/questions', json=question)
             self.assertEqual(res.status_code, 201)
+            self.assertIn('success', res.json)
         else:
             res = self.client.post('/api/v1/questions', json=question)
             self.assertEqual(res.status_code, 401)

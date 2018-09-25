@@ -471,3 +471,4 @@ def forbidden_resource(e):
 @app.errorhandler(410)
 def deleted_resource(e):
     return jsonify({'error': "Sorry, this resource was deleted"}), 410
+
