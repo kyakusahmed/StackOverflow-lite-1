@@ -1,15 +1,18 @@
 from datetime import datetime, timedelta
 
-from flask import Flask, Response, json, jsonify, request, url_for
+from flask import (Flask, Response, make_response,
+                   json, jsonify, request, url_for)
 from flask_jwt_extended import (JWTManager, create_access_token,
                                 get_jwt_identity, jwt_required)
 from werkzeug.security import check_password_hash
 
-from app import app
+from app import (app, internal_server_error, url_unknown, after_request,
+                 method_not_allowed, forbidden_resource, deleted_resource)
 from app.connect import conn
 from app.models import (Answer, Question, User, valid_answer, valid_login_data,
                         valid_question, valid_signup_data, valid_username)
 
+origin = 'httsp://stackoverflowlite-cdvx-fronted.herokuapp.com'
 
 @app.route('/')
 def show_api_works():
@@ -46,9 +49,12 @@ def login():
             identity=username,
             fresh=timedelta(minutes=1440)
         )
+        # headers = {''}
         msg = {'access_token': f'{access_token}'}
-
-        return jsonify(msg), 200
+        response = make_response(jsonify(msg))
+        response.headers.add('Acess-Control-Allow-Origin', origin)
+        response.headers.add('Acess-Control-Allow-Headers', 'Content-Type,Authorization')
+        return response, 200
     msg = {"message": "Invalid login data",
            "Hint": """required formart is: {'username':'xyz',
                     'password': 'xyh12',}"""}
@@ -98,10 +104,12 @@ def signup():
                     if  repeat_password == password:
                         user = User(username, email, password)
                         conn.insert_new_record('users', user.__repr__())
-                    
-                        return jsonify({
-                            'success': f"{username}'s account created successfully"
-                        }), 201
+
+                        response = make_response(jsonify({
+                            'success': f"{username}'s account created successfully"}))
+                        response.headers.add('Acess-Control-Allow-Origin', origin)
+                        response.headers.add('Acess-Control-Allow-Headers', 'Content-Type,Authorization')
+                        return response, 201
                     if repeat_password and repeat_password != password:
                         return jsonify({
                             'message': 'Password does not match repeat_password'
@@ -118,6 +126,7 @@ def signup():
 def get_questions():
     questionsList = conn.query_all('questions')
     questions = []
+    print(questionsList)
     if questionsList:
         for qn in questionsList:
             temp = {
@@ -128,7 +137,8 @@ def get_questions():
             }
             questions.append(temp)
         return jsonify({'questions': questions}), 200
-    return jsonify({'message': 'No Questions added.'}), 404
+    response = make_response(jsonify({'message': 'No Questions added.'}))
+    return response, 404
 
 
 @app.route('/api/v1/questions/<int:questionId>', methods=['GET'])
@@ -245,10 +255,13 @@ def add_question():
             question.author = current_user
             conn.insert_new_record('questions', question.__repr__())
 
-            return jsonify({
+            response = make_response(jsonify({
                 'success': 'Question posted successfully',
                 'question': question.__repr__()
-            }), 201
+            }))
+            response.headers.add('Acess-Control-Allow-Origin', origin)
+            response.headers.add('Acess-Control-Allow-Headers', 'Content-Type,Authorization')
+            return response, 201
 
         else:
             if not duplicate_check[0] and len(duplicate_check) > 1:
@@ -288,10 +301,13 @@ def add_answer(questionId):
                 answer.author = current_user
                 conn.insert_new_record('answers', answer.__repr__())
 
-                return jsonify({
+                response = make_response(jsonify({
                     'success': 'Answer posted successfully',
                     'answer': answer.__repr__()
-                }), 201
+                }))
+                response.headers.add('Acess-Control-Allow-Origin', origin)
+                response.headers.add('Acess-Control-Allow-Headers', 'Content-Type,Authorization')
+                return response, 201
 
             else:
 
@@ -345,10 +361,14 @@ def select_answer_as_preferred(questionId, answerId):
                         'prefered': True,
                         'questionId': answer[0][1]
                     }
-                    return jsonify({
+
+                    response = make_response(jsonify({
                         'success': "Answer marked as preferred",
                         'answer': temp
-                    }), 201
+                    }))
+                    response.headers.add('Acess-Control-Allow-Origin', origin)
+                    response.headers.add('Acess-Control-Allow-Headers', 'Content-Type,Authorization')
+                    return response, 201
     
                 return jsonify({'message': 'Answer not found!'}), 404
             return jsonify({'message':
@@ -388,8 +408,12 @@ def update_question(questionId):
                                     'new_body': request_data['body']
                                 }
                                 msg = 'Question updated successfully.'
-                                return jsonify({'success': msg,
-                                                'updated_question': temp}), 200
+
+                                response = make_response(jsonify({'success': msg,
+                                                         'updated_question': temp}))
+                                response.headers.add('Acess-Control-Allow-Origin', origin)
+                                response.headers.add('Acess-Control-Allow-Headers', 'Content-Type,Authorization')
+                                return response, 200
                     if not result[0] and len(result) > 1:
                         msg = {'message':result[1]}
                         return jsonify(msg), 400
@@ -434,7 +458,11 @@ def delete_question(questionId):
 
                             message = {
                                 'success': f"Question deleted!"}
-                            return jsonify({'success': message}), 200
+
+                            response = make_response(jsonify({'success': message}))
+                            response.headers.add('Acess-Control-Allow-Origin', origin)
+                            response.headers.add('Acess-Control-Allow-Headers', 'Content-Type,Authorization')
+                            return response, 200
             msg = f'Only question auhtor:{current_user} can perform this action!'
             return jsonify({'message': msg}), 401
         return jsonify({'message': 'Question not found'}), 404
@@ -443,32 +471,5 @@ def delete_question(questionId):
                     'Signup or login, to get access_token'}}), 401
 
 
-@app.errorhandler(500)
-def internal_sserver_error(e):
-    msg = "Sorry,we are experiencing some technical difficulties"
-    msg2 = "Please report this to cedriclusiba@gmail.com and check back with us soon"
-    return jsonify({'error': msg, "hint": msg2}), 500
 
-
-@app.errorhandler(404)
-def url_unknown(e):
-    msg = "Sorry, resource you are looking for does not exist"
-    return jsonify({"error": msg}), 404
-
-
-@app.errorhandler(405)
-def method_not_allowed(e):
-    msg = "Sorry, this action is not supported for this url"
-    return jsonify({'error': msg}), 405
-
-
-@app.errorhandler(403)
-def forbidden_resource(e):
-    msg = "Sorry, resource you are trying to access is forbidden"
-    return jsonify({'error': msg}), 403
-
-
-@app.errorhandler(410)
-def deleted_resource(e):
-    return jsonify({'error': "Sorry, this resource was deleted"}), 410
 
