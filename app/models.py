@@ -57,6 +57,7 @@ class User:
 
 def valid_username(username):
     users = conn.query_all('users')
+    print(users)
     if len(users) != 0:
         for user in users:
             existing_user = [user[1]
