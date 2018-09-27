@@ -179,8 +179,7 @@ def get_question(questionId):
                 }
                 return jsonify(temp), 200
             
-        return Response(json.dumps(['Question not Found']),
-                        status=404, mimetype='application/json')
+        return jsonify({'message': 'No answers added'}), 404
         
     return jsonify({'message': 'No questions added.'}), 200
 
@@ -191,6 +190,7 @@ def get_answers(questionId):
     questionsList = conn.query_all('questions')
     if questionsList:
         questions = [qn for qn in questionsList if int(qn[4]) == questionId]
+        print(questions)
         if questions:
             answers = []
             if answersList:
