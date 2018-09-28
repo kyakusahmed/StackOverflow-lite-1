@@ -20,7 +20,7 @@ class DatabaseConnection(object):
                 print("cannot connect to Heroku database")
 
         else:
-            self.dbname = "clvx"
+            self.dbname = "clvx" 
 
         try:
             
