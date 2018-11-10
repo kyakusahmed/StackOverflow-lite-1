@@ -24,7 +24,8 @@ class DatabaseConnection(object):
 
         try:
             
-            self.connection = psycopg2.connect(dbname=f"{self.dbname}", user='postgres', host='localhost', password='Tesxting', port='5432')
+            self.connection = psycopg2.connect(dbname='dc5k7ckdr7orfv', user='jifyigljportyu', host='
+ec2-23-23-101-25.compute-1.amazonaws.com', password='1b409cc626edcfc44103074cd2b1b9f96663a9350f12022169c82febecc2e2ac', port='5432')
             self.connection.autocommit = True
             self.cursor = self.connection.cursor()
             self.last_ten_queries = []
